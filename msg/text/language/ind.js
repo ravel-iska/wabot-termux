@@ -8,7 +8,8 @@ exports.menu = (prefix, pushname, botName, ownerName) => {
 ◩ *Bot Info*
   │
   ├❏ Bot Name : ${botName}
-  └❏ Owner Name : ${ownerName}
+  ├❏ Owner Name : ${ownerName}
+  └❏ Prefix : 「 ${prefix} 」
 ◩ *About*
   │
   ├❏
