@@ -213,6 +213,13 @@ async function starts() {
 
 			}
 			switch(command) {
+				case 'info':
+					me = nsls.user
+					uptime = process.uptime()
+					teks = `*Nama bot* : ${me.name}\n*Nomor Bot* : @${me.jid.split('@')[0]}\n*Prefix* : ${prefix}\n*Total Block Contact* : ${blocked.length}\n*The bot is active on* : ${kyun(uptime)}`
+					buffer = await getBuffer(me.imgUrl)
+					nsls.sendMessage(from, buffer, image, {caption: teks, contextInfo:{mentionedJid: [me.jid]}})
+					break
 				default:
 					if (isGroup && isSimi && budy != undefined) {
 						console.log(budy)
