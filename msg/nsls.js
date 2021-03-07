@@ -27,6 +27,23 @@ const { recognize } = require('./../lib/ocr')
 const welkom = JSON.parse(fs.readFileSync('./../database/group/welkom.json'))
 const nsfw = JSON.parse(fs.readFileSync('./../database/group/nsfw.json'))
 const samih = JSON.parse(fs.readFileSync('./../database/group/simi.json'))
+const setting = JSON.parse(fs.readFileSync('./settings/setting.json'))
+/*const {
+    prefix,
+} = setting*/
+
 
 prefix = setting.prefix
 blocked = []
+
+function kyun(seconds){
+  function pad(s){
+    return (s < 10 ? '0' : '') + s;
+  }
+  var hours = Math.floor(seconds / (60*60));
+  var minutes = Math.floor(seconds % (60*60) / 60);
+  var seconds = Math.floor(seconds % 60);
+
+  //return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds)
+  return `${pad(hours)} Jam ${pad(minutes)} Menit ${pad(seconds)} Detik`
+}
