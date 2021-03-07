@@ -6,3 +6,4 @@ const {
     Mimetype,
     GroupSettingChange
 } = require('@adiwajshing/baileys')
+const { color, bgcolor } = require('./../lib/color')
