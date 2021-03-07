@@ -32,6 +32,7 @@ const {
     mbbApiKey,
     botNames,
     ownerNames,
+    ownerNumbers
 } = setting
 
 
@@ -127,7 +128,7 @@ async function starts() {
 			const args = body.trim().split(/ +/).slice(1)
 			const isCmd = body.startsWith(prefix)
 			const botNumber = nsls.user.jid
-			const ownerNumber = [`${setting.ownerNumber}@s.whatsapp.net`] // replace this with your number
+			const ownerNumber = [`${ownerNumbers}@s.whatsapp.net`] // replace this with your number
 			const isGroup = from.endsWith('@g.us')
 			const sender = isGroup ? mek.participant : mek.key.remoteJid
 			const groupMetadata = isGroup ? await nsls.groupMetadata(from) : ''
