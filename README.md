@@ -1,0 +1,2 @@
+# wabot-termux
+Whatsapp Bot
