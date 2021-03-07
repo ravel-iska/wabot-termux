@@ -30,6 +30,8 @@ const samih = JSON.parse(fs.readFileSync('./../database/group/simi.json'))
 const setting = JSON.parse(fs.readFileSync('./settings/setting.json'))
 const {
     mbbApiKey,
+    botNames,
+    ownerNames,
 } = setting
 
 
@@ -139,6 +141,11 @@ async function starts() {
 			const isNsfw = isGroup ? nsfw.includes(from) : false
 			const isSimi = isGroup ? samih.includes(from) : false
 			const isOwner = ownerNumber.includes(sender)
+			const q = args.join(' ')
+			pushname = nsls.contacts[sender] != undefined ? nsls.contacts[sender].vname || nsls.contacts[sender].notify : undefined
+                        const botName = botNames
+                        const ownerName = ownerNames
+                        
 			const isUrl = (url) => {
 			    return url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/, 'gi'))
 			}
