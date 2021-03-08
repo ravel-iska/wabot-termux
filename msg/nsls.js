@@ -9,13 +9,16 @@ const {
 } = require('@adiwajshing/baileys')
 const fs = require('fs')
 const moment = require('moment-timezone')
-const { exec } = require('child_process')
+const { exec, spawn } = require('child_process')
 const fetch = require('node-fetch')
 const tiktod = require('tiktok-scraper')
 const ffmpeg = require('fluent-ffmpeg')
 const { removeBackgroundFromImageFile } = require('remove.bg')
 const lolis = require('lolis.life')
 const loli = new lolis()
+const ms = require('parse-ms')
+const toMs = require('ms')
+const path = require('path')
 
 /*~~~~~[ JS File ]~~~~~*/
 const { color, bgcolor } = require('./../lib/color')
@@ -32,9 +35,11 @@ const {
     mbbApiKey,
     botNames,
     ownerNames,
-    ownerNumbers
+    ownerNumbers,
+    zeksApiKey
 } = setting
 
+const cd = 4.32e+7
 
 prefix = setting.prefix
 blocked = []
@@ -214,13 +219,60 @@ async function starts() {
 
 			}
 			switch(command) {
-				case 'info':
+                                case 'help': //nslszt
+                                case 'menu':
+                                        nsls.sendMessage(from, langB.menu(prefix, pushname, botName, ownerName), text)
+                                        break
+				case 'info': //mbb
 					me = nsls.user
 					uptime = process.uptime()
 					teks = `*Nama bot* : ${me.name}\n*Nomor Bot* : @${me.jid.split('@')[0]}\n*Prefix* : ${prefix}\n*Total Block Contact* : ${blocked.length}\n*The bot is active on* : ${kyun(uptime)}`
 					buffer = await getBuffer(me.imgUrl)
 					nsls.sendMessage(from, buffer, image, {caption: teks, contextInfo:{mentionedJid: [me.jid]}})
 					break
+                                case 'tebakgambar': //affis
+					anu = await fetchJson(`https://api.zeks.xyz/api/tebakgambar?apikey=${zeksApiKey}`, {method: 'get'})
+					ngebuff = await getBuffer(anu.result.soal)
+					tebak = `❏ Jawaban : *${anu.result.jawaban}*`
+					setTimeout( () => {
+					        nsls.sendMessage(from, tebak, text, {quoted: mek})
+					}, 30000) // 1000 = 1s,
+					setTimeout( () => {
+					        nsls.sendMessage(from, '_10 Detik lagi..._', text) // ur cods
+					}, 20000) // 1000 = 1s,
+					setTimeout( () => {
+					        nsls.sendMessage(from, '_20 Detik lagi..._', text) // ur cods
+					}, 10000) // 1000 = 1s,
+					setTimeout( () => {
+					        nsls.sendMessage(from, '_30 Detik lagi..._', text) // ur cods
+					}, 2500) // 1000 = 1s,
+					setTimeout( () => {
+					        nsls.sendMessage(from, ngebuff, image, { caption: '_Tebak bro!!! gak bisa jawab donasi ya:v_', quoted: mek }) // ur cods
+					}, 0) // 1000 = 1s,
+				        break
+				case 'memeindo': //nsls
+					nganu = await fetchJson(`https://api.zeks.xyz/api/memeindo?apikey=${zeksApiKey}`)
+					buper = await getBuffer(nganu.result)
+					nsls.sendMessage(from, buper, image, {quoted: mek})
+				        break
+                                case 'ttp': //affis
+					pngttp = './../tmp/ttp.png'
+					webpng = './../tmp/ttp.webp'
+					const ttptext = body.slice(5)
+					fetch(`https://api.areltiyan.site/sticker_maker?text=${ttptext}`, { method: 'GET'})
+					    .then(async res => {
+					        const ttptxt = await res.json()
+					        base64Img.img(ttptxt.base64, 'tmp', 'ttp', function(err, filepath) {
+					                if (err) return console.log(err);
+					                exec(`ffmpeg -i ${pngttp} -vcodec libwebp -filter:v fps=fps=20 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${webpng}`, (err) => {
+					                        buffer = fs.readFileSync(webpng)
+					                        nsls.sendMessage(from, buffer, sticker)
+					                        fs.unlinkSync(webpng)
+					                        fs.unlinkSync(pngttp)
+					                })
+					        })
+					    });
+				        break
 				default:
 					if (isGroup && isSimi && budy != undefined) {
 						console.log(budy)
