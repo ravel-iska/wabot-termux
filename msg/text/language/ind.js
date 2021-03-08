@@ -14,7 +14,7 @@ exports.menu = (prefix, pushname, botName, ownerName) => {
   │
   ├❏ ${prefix}info
   └❏
-◩ *Menu*
+◩ *Maker Commands*
   │
   ├❏
   └❏
