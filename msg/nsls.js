@@ -19,6 +19,10 @@ const loli = new lolis()
 const ms = require('parse-ms')
 const toMs = require('ms')
 const path = require('path')
+const util = require('util')
+const os = require('os')
+const crypto = require('crypto')
+const axios = require('axios')
 
 /*~~~~~[ JS File ]~~~~~*/
 const { color, bgcolor } = require('./../lib/color')
@@ -31,6 +35,7 @@ const welkom = JSON.parse(fs.readFileSync('./../database/group/welkom.json'))
 const nsfw = JSON.parse(fs.readFileSync('./../database/group/nsfw.json'))
 const samih = JSON.parse(fs.readFileSync('./../database/group/simi.json'))
 const setting = JSON.parse(fs.readFileSync('./settings/setting.json'))
+const package = JSON.parse(fs.readFileSync('./../package.json'))
 const {
     mbbApiKey,
     botNames,
@@ -59,20 +64,23 @@ function kyun(seconds){
 async function starts() {
 	const nsls = new WAConnection()
 	nsls.logger.level = 'warn'
-	console.log(banner.string)
 	nsls.on('qr', () => {
 		console.log(color('[','white'), color('!','red'), color(']','white'), color(' Scan the qr code above'))
 	})
 
-	fs.existsSync('./BarBar.json') && nsls.loadAuthInfo('./BarBar.json')
+	fs.existsSync('./Nsls.json') && nsls.loadAuthInfo('./Nsls.json')
 	nsls.on('connecting', () => {
 		start('2', 'Connecting...')
 	})
 	nsls.on('open', () => {
-		success('2', 'Connected')
+		success('2', '[SYSTEM] Bot is Now Online!')
 	})
 	await nsls.connect({timeoutMs: 30*1000})
-        fs.writeFileSync('./BarBar.json', JSON.stringify(nsls.base64EncodedAuthInfo(), null, '\t'))
+        fs.writeFileSync('./Nsls.json', JSON.stringify(nsls.base64EncodedAuthInfo(), null, '\t'))
+
+        console.log(color(`[DEV]`, 'cyan'), color(`${package.author}`, 'yellow'))
+        console.log(color('=> Bot successfully loaded!', 'yellow'))
+        console.log(color('[DEV]', 'cyan'), color('Welcome back, Owner! Hope you are doing well~', 'magenta'))
 
 	nsls.on('group-participants-update', async (anu) => {
 		if (!welkom.includes(anu.jid)) return
