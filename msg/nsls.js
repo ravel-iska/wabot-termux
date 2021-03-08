@@ -4,8 +4,16 @@ const {
     WAConnection,
     MessageType,
     Presence,
+    MessageOptions,
     Mimetype,
-    GroupSettingChange
+    WALocationMessage,
+    WA_MESSAGE_STUB_TYPES,
+    ReconnectMode,
+    ProxyAgent,
+    GroupSettingChange,
+    waChatKey,
+    mentionedJid,
+    processTime,
 } = require('@adiwajshing/baileys')
 const fs = require('fs')
 const moment = require('moment-timezone')
@@ -36,6 +44,16 @@ const nsfw = JSON.parse(fs.readFileSync('./../database/group/nsfw.json'))
 const samih = JSON.parse(fs.readFileSync('./../database/group/simi.json'))
 const setting = JSON.parse(fs.readFileSync('./settings/setting.json'))
 const package = JSON.parse(fs.readFileSync('./../package.json'))
+const _leveling = JSON.parse(fs.readFileSync('./../database/group/leveling.json'))
+const _level = JSON.parse(fs.readFileSync('./../database/user/level.json'))
+const _registered = JSON.parse(fs.readFileSync('./../database/bot/registered.json'))
+const event = JSON.parse(fs.readFileSync('./../database/bot/event.json'))
+const _limit = JSON.parse(fs.readFileSync('./../database/user/limit.json'))
+const uang = JSON.parse(fs.readFileSync('./../database/user/uang.json'))
+const prem = JSON.parse(fs.readFileSync('./../database/user/prem.json'))
+const antilink = JSON.parse(fs.readFileSync('./../database/group/antilink.json'))
+const bad = JSON.parse(fs.readFileSync('./../database/group/bad.json'))
+const badword = JSON.parse(fs.readFileSync('./../database/group/badword.json'))
 const {
     mbbApiKey,
     botNames,
@@ -210,7 +228,43 @@ const limitAdd = (sender) => {
         _limit[position].limit += 1
         fs.writeFileSync('./../database/user/limit.json', JSON.stringify(_limit))
     }
+}
+
+const getPremiumExpired = (sender) => {
+    let position = null
+    Object.keys(prem).forEach((i) => {
+        if (prem[i].id === sender) {
+            position = i
+        }
+    })
+    if (position !== null) {
+        return prem[position].expired
+    }
 } 
+		
+const expiredCheck = () => {
+    setInterval(() => {
+        let position = null
+	Object.keys(prem).forEach((i) => {
+	    if (Date.now() >= prem[i].expired) {
+	        position = i
+            }
+	})
+	if (position !== null) {
+	    console.log(`Premium expired: ${prem[position].id}`)
+	    prem.splice(position, 1)
+            fs.writeFileSync('./../database/bot/prem.json', JSON.stringify(prem))
+        }
+    }, 1000)
+} 
+		
+const getAllPremiumUser = () => {
+    const array = []
+    Object.keys(prem).forEach((i) => {
+        array.push(prem[i].id)
+    })
+    return array
+}
 
 function kyun(seconds){
   function pad(s){
@@ -343,8 +397,8 @@ async function starts() {
 			const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
 
                         /*~~~~~[ Private Message ]~~~~~*/
-			if (!isGroup && isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mCLIENT EXEC\x1b[1;37m]', time, color(command), 'from', color(sender.split('@')[0]), 'args :', color(args.length))
-			if (!isGroup && !isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;31mCLIENT RECV\x1b[1;37m]', time, color('Message'), 'from', color(sender.split('@')[0]), 'args :', color(args.length))
+			if (!isGroup && isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mnsls EXEC\x1b[1;37m]', time, color(command), 'from', color(sender.split('@')[0]), 'args :', color(args.length))
+			if (!isGroup && !isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;31mnsls RECV\x1b[1;37m]', time, color('Message'), 'from', color(sender.split('@')[0]), 'args :', color(args.length))
 
                         /*~~~~~[ Group Message ]~~~~~*/
 			if (isCmd && isGroup) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mGROUP EXEC\x1b[1;37m]', time, color(command), 'from', color(sender.split('@')[0]), 'in', color(groupName), 'args :', color(args.length))
@@ -394,6 +448,223 @@ async function starts() {
 				})	
 
 			}
+			//auto Expired - Affis
+			expiredCheck()
+			
+			//function rank - Affis
+			const levelRole = getLevelingLevel(sender)
+   	                var role = 'Trainee'
+   	                if (levelRole <= 5) {
+   	                    role = 'senior trainee'
+   	                } else if (levelRole <= 10) {
+   	                    role = 'private'
+   	                } else if (levelRole <= 15) {
+   	                    role = 'corporal'
+   	                } else if (levelRole <= 20) {
+   	                    role = 'Sergeant'
+   	                } else if (levelRole <= 25) {
+   	                    role = 'staff sgt I'
+   	                } else if (levelRole <= 30) {
+   	                    role = 'staff sgt II'
+   	                } else if (levelRole <= 35) {
+   	                    role = 'staff sgt II'
+   	                } else if (levelRole <= 40) {
+   	                    role = 'Sgt 1st class I'
+   	                } else if (levelRole <= 45) {
+   	                    role = 'Sgt 1st class II'
+   	                } else if (levelRole <= 50) {
+   	                    role = 'Sgt 1st class III'
+   	                } else if (levelRole <= 55) {
+   	                    role = 'Ggt 1st class IV'
+   	                } else if (levelRole <= 60) {
+   	                    role = 'Master sgt I'
+   	                } else if (levelRole <= 65) {
+   	                    role = 'Master sgt II'
+   	                } else if (levelRole <= 70) {
+   	                    role = 'Master sgt III'
+   	                } else if (levelRole <= 75) {
+   	                    role = 'Master sgt IV'
+   	                } else if (levelRole <= 80) {
+   	                    role = 'Master sgt V'
+   	                } else if (levelRole <= 85) {
+   	                    role = '2nd Lt I'
+   	                } else if (levelRole <= 90) {
+   	                    role = '2nd Lt II'
+   	                } else if (levelRole <= 95) {
+   	                    role = '2nd Lt III'
+   	                } else if (levelRole <= 100) {
+   	                    role = '2nd Lt IV'
+   	                }
+
+			var premi = '*X*'
+			if (isPrem) {
+			    premi = '*✓*'
+			} 
+			if (isOwner) {
+			    premi = '*Owner*'
+			}
+
+	                //function leveling
+                        if (isGroup && isRegistered && isLevelingOn) {
+                            const currentLevel = getLevelingLevel(sender)
+                            const checkId = getLevelingId(sender)
+                            try {
+                                if (currentLevel === undefined && checkId === undefined) addLevelingId(sender)
+                                const amountXp = Math.floor(Math.random() * 10) + 500
+                                const requiredXp = 5000 * (Math.pow(2, currentLevel) - 1)
+                                const getLevel = getLevelingLevel(sender)
+                                addLevelingXp(sender, amountXp)
+                                if (requiredXp <= getLevelingXp(sender)) {
+                                    addLevelingLevel(sender, 1)
+                                    bayarLimit(sender, 3)
+                                    await reply(ind.levelup(pushname, sender, getLevelingXp,  getLevel, getLevelingLevel, role))
+                                }
+                            } catch (err) {
+                                console.error(err)
+                            }
+                        }
+
+                        //function check limit
+                        const checkLimit = (sender) => {
+          	            let found = false
+                            for (let lmt of _limit) {
+                                if (lmt.id === sender) {
+                                    let limitCounts = limitawal - lmt.limit
+                                    if (limitCounts <= 0) return nsls.sendMessage(from,`Limit request anda sudah habis\n\n_Note : limit bisa di dapatkan dengan cara ${prefix}buylimit dan dengan naik level_`, text,{ quoted: mek})
+                                    nsls.sendMessage(from, ind.limitcount(limitCounts), text, { quoted : mek})
+                                    found = true
+                                }
+                            }
+                            if (found === false) {
+                                let obj = { id: sender, limit: 0 }
+                                _limit.push(obj)
+                                fs.writeFileSync('./../database/user/limit.json', JSON.stringify(_limit))
+                                nsls.sendMessage(from, ind.limitcount(limitCounts), text, { quoted : mek})
+                            }
+		        }
+
+			//funtion limited
+                        const isLimit = (sender) =>{ 
+          	            if (isOwner && isPrem) {return false;}
+		            let position = false
+                            for (let i of _limit) {
+                                if (i.id === sender) {
+                        	    let limits = i.limit
+                                    if (limits >= limitawal ) {
+              	                        position = true
+                                        nsls.sendMessage(from, ind.limitend(pushname), text, {quoted: mek})
+                                        return true
+                                    } else {
+                        	        _limit
+                                        position = true
+                                        return false
+                                    }
+                                }
+                            }
+                            if (position === false) {
+           	                const obj = { id: sender, limit: 0 }
+                                _limit.push(obj)
+                                fs.writeFileSync('./../database/user/limit.json',JSON.stringify(_limit))
+                                return false
+     	                    }
+     	                }
+
+     	                if (isGroup) {
+			    try {
+				const getmemex = groupMembers.length	
+				if (getmemex <= memberlimit) {
+				    reply(`maaf member group belum memenuhi syarat. minimal member group adalah ${memberlimit}`)
+				    setTimeout( () => {
+ 	                                nsls.groupLeave(from) 
+ 				    }, 0)
+				}
+		            } catch (err) {
+                                console.error(err)
+                            }
+ 	                }
+
+	   	        if (isGroup && isBadWord) {
+                            if (bad.includes(messagesC)) {
+                                if (!isGroupAdmins) {
+                                    try { 
+                                        reply("JAGA UCAPAN DONG!! 😠")
+                                        setTimeout( () => {
+ 	                                    nsls.groupLeave(from) 
+ 					}, 5000)
+					setTimeout( () => {
+					    nsls.updatePresence(from, Presence.composing)
+					    reply("1detik")
+					}, 4000)
+					setTimeout( () => {
+					    nsls.updatePresence(from, Presence.composing)
+					    reply("2detik")
+					}, 3000)
+					setTimeout( () => {
+					    nsls.updatePresence(from, Presence.composing)
+					    reply("3detik")
+					}, 2000)
+					setTimeout( () => {
+					    nsls.updatePresence(from, Presence.composing)
+					    reply("4detik")
+					}, 1000)
+					setTimeout( () => {
+					    nsls.updatePresence(from, Presence.composing)
+					    reply("*「 ANTI BADWORD 」*\nKamu dikick karena berkata kasar!")
+					}, 0)
+                                    } catch {
+                                        nsls.sendMessage(from, `Untung cya bukan admin, kalo admin udah cya kick!`, text , {quoted : mek})
+                                    }
+                                } else {
+                                    return reply( "Tolong Jaga Ucapan Min 😇")
+                                }
+                            }
+                        }
+
+			//function antilink 
+			if (messagesC.includes("://chat.whatsapp.com/")){
+			    if (!isGroup) return
+			    if (!isAntiLink) return
+			    if (isGroupAdmins) return reply('karena kamu adalah admin group, BOT tidak akan kick kamu')
+			    nsls.updatePresence(from, Presence.composing)
+			    if (messagesC.includes("#izinadmin")) return reply("#izinadmin diterima")
+			    var kic = `${sender.split("@")[0]}@s.whatsapp.net`
+			    reply(`Link Group Terdeteksi maaf ${sender.split("@")[0]} anda akan di kick dari group 5detik lagi`)
+			    setTimeout( () => {
+			        nsls.groupRemove(from, [kic]).catch((e)=>{reply(`*ERR:* ${e}`)})
+			    }, 5000)
+			    setTimeout( () => {
+			        nsls.updatePresence(from, Presence.composing)
+				reply("1detik")
+			    }, 4000)
+			    setTimeout( () => {
+				nsls.updatePresence(from, Presence.composing)
+				reply("2detik")
+			    }, 3000)
+			    setTimeout( () => {
+				nsls.updatePresence(from, Presence.composing)
+				reply("3detik")
+			    }, 2000)
+			    setTimeout( () => {
+				nsls.updatePresence(from, Presence.composing)
+				reply("4detik")
+			    }, 1000)
+			    setTimeout( () => {
+				nsls.updatePresence(from, Presence.composing)
+				reply("5detik")
+			    }, 0)
+			}
+
+	                //function balance
+ 	                if (isRegistered ) {
+ 	                    const checkATM = checkATMuser(sender)
+ 	                    try {
+ 	                        if (checkATM === undefined) addATM(sender)
+ 	                        const uangsaku = Math.floor(Math.random() * 10) + 90
+	                        addKoinUser(sender, uangsaku)
+  	                    } catch (err) {
+   	                        console.error(err)
+   	                    }
+	                }
 			switch(command) {
                                 case 'help': //nslszt
                                 case 'menu':
