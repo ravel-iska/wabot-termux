@@ -49,7 +49,7 @@ const cd = 4.32e+7
 prefix = setting.prefix
 blocked = []
 
-//Functions
+/*~~~~~[ Functions ]~~~~~*/
 const getLevelingXp = (sender) => {
     let position = false
     Object.keys(_level).forEach((i) => {
@@ -95,7 +95,7 @@ const addLevelingXp = (sender, amount) => {
     })
     if (position !== false) {
         _level[position].xp += amount
-        fs.writeFileSync('./database/user/level.json', JSON.stringify(_level))
+        fs.writeFileSync('./../database/user/level.json', JSON.stringify(_level))
     }
 }
 
@@ -108,14 +108,14 @@ const addLevelingLevel = (sender, amount) => {
     })
     if (position !== false) {
         _level[position].level += amount
-        fs.writeFileSync('./database/user/level.json', JSON.stringify(_level))
+        fs.writeFileSync('./../database/user/level.json', JSON.stringify(_level))
     }
 }
 
 const addLevelingId = (sender) => {
     const obj = {id: sender, xp: 1, level: 1}
     _level.push(obj)
-    fs.writeFileSync('./database/user/level.json', JSON.stringify(_level))
+    fs.writeFileSync('./../database/user/level.json', JSON.stringify(_level))
 }
              
 const getRegisteredRandomId = () => {
@@ -125,7 +125,7 @@ const getRegisteredRandomId = () => {
 const addRegisteredUser = (userid, sender, age, time, serials) => {
     const obj = { id: userid, name: sender, age: age, time: time, serial: serials }
     _registered.push(obj)
-    fs.writeFileSync('./database/bot/registered.json', JSON.stringify(_registered))
+    fs.writeFileSync('./../database/bot/registered.json', JSON.stringify(_registered))
 }
 
 const createSerial = (size) => {
@@ -145,7 +145,7 @@ const checkRegisteredUser = (sender) => {
 const addATM = (sender) => {
     const obj = {id: sender, uang : 0}
     uang.push(obj)
-    fs.writeFileSync('./database/user/uang.json', JSON.stringify(uang))
+    fs.writeFileSync('./../database/user/uang.json', JSON.stringify(uang))
 }
         
 const addKoinUser = (sender, amount) => {
@@ -157,7 +157,7 @@ const addKoinUser = (sender, amount) => {
     })
     if (position !== false) {
         uang[position].uang += amount
-        fs.writeFileSync('./database/user/uang.json', JSON.stringify(uang))
+        fs.writeFileSync('./../database/user/uang.json', JSON.stringify(uang))
     }
 }
         
@@ -182,7 +182,7 @@ const bayarLimit = (sender, amount) => {
     })
     if (position !== false) {
         _limit[position].limit -= amount
-        fs.writeFileSync('./database/user/limit.json', JSON.stringify(_limit))
+        fs.writeFileSync('./../database/user/limit.json', JSON.stringify(_limit))
     }
 }
         	
@@ -195,7 +195,7 @@ const confirmATM = (sender, amount) => {
     })
     if (position !== false) {
         uang[position].uang -= amount
-        fs.writeFileSync('./database/user/uang.json', JSON.stringify(uang))
+        fs.writeFileSync('./../database/user/uang.json', JSON.stringify(uang))
     }
 }
         
@@ -208,7 +208,7 @@ const limitAdd = (sender) => {
     })
     if (position !== false) {
         _limit[position].limit += 1
-        fs.writeFileSync('./database/user/limit.json', JSON.stringify(_limit))
+        fs.writeFileSync('./../database/user/limit.json', JSON.stringify(_limit))
     }
 } 
 
@@ -341,10 +341,15 @@ async function starts() {
 			const isQuotedImage = type === 'extendedTextMessage' && content.includes('imageMessage')
 			const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
 			const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
-			if (!isGroup && isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(command), 'from', color(sender.split('@')[0]), 'args :', color(args.length))
-			if (!isGroup && !isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;31mRECV\x1b[1;37m]', time, color('Message'), 'from', color(sender.split('@')[0]), 'args :', color(args.length))
-			if (isCmd && isGroup) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(command), 'from', color(sender.split('@')[0]), 'in', color(groupName), 'args :', color(args.length))
-			if (!isCmd && isGroup) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;31mRECV\x1b[1;37m]', time, color('Message'), 'from', color(sender.split('@')[0]), 'in', color(groupName), 'args :', color(args.length))
+
+                        /*~~~~~[ Private Message ]~~~~~*/
+			if (!isGroup && isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mCLIENT EXEC\x1b[1;37m]', time, color(command), 'from', color(sender.split('@')[0]), 'args :', color(args.length))
+			if (!isGroup && !isCmd) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;31mCLIENT RECV\x1b[1;37m]', time, color('Message'), 'from', color(sender.split('@')[0]), 'args :', color(args.length))
+
+                        /*~~~~~[ Group Message ]~~~~~*/
+			if (isCmd && isGroup) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mGROUP EXEC\x1b[1;37m]', time, color(command), 'from', color(sender.split('@')[0]), 'in', color(groupName), 'args :', color(args.length))
+			if (!isCmd && isGroup) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;31mGROUP RECV\x1b[1;37m]', time, color('Message'), 'from', color(sender.split('@')[0]), 'in', color(groupName), 'args :', color(args.length))
+
 			let authorname = nsls.contacts[from] != undefined ? nsls.contacts[from].vname || nsls.contacts[from].notify : undefined	
 			if (authorname != undefined) { } else { authorname = groupName }	
 
