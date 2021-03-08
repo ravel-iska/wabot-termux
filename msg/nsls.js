@@ -450,6 +450,32 @@ async function starts() {
 			}
 			//auto Expired - Affis
 			expiredCheck()
+
+			var per = '*[▒▒▒▒▒▒▒▒▒▒] 0%*'
+			const peri = 5000 * (Math.pow(2, getLevelingLevel(sender)) - 1)
+			const perl = peri-getLevelingXp(sender) 
+			const resl = Math.round(100-((perl/getLevelingXp(sender))*100))
+			if (resl <= 10) {
+			    per = `*[█▒▒▒▒▒▒▒▒▒] ${resl}%*`
+			} else if (resl <= 20) {
+			    per = `*[██▒▒▒▒▒▒▒▒] ${resl}%*`
+			} else if (resl <= 30) {
+			    per = `*[███▒▒▒▒▒▒▒] ${resl}%*`
+			} else if (resl <= 40) {
+			    per = `*[████▒▒▒▒▒▒] ${resl}%*`
+			} else if (resl <= 50) {
+			    per = `*[█████▒▒▒▒▒] ${resl}%*`
+			} else if (resl <= 60) {
+			    per = `*[██████▒▒▒▒] ${resl}%*`
+			} else if (resl <= 70) {
+			    per = `*[███████▒▒▒] ${resl}%*`
+			} else if (resl <= 80) {
+			    per = `*[████████▒▒] ${resl}%*`
+			} else if (resl <= 90) {
+			    per = `*[█████████▒] ${resl}%*`
+			} else if (resl <= 100) {
+			    per = `*[██████████] ${resl}%*`
+			} 
 			
 			//function rank - Affis
 			const levelRole = getLevelingLevel(sender)
