@@ -946,7 +946,7 @@ async function starts() {
 					no = 0
 					for (let admon of groupAdmins) {
 						no += 1
-						teks += `[${no.toString()}] @${admon.split('@')[0]}\n`
+						teks += `「 ${no.toString()} 」@${admon.split('@')[0]}\n`
 					}
 					mentions(teks, groupAdmins, true)
 					break
@@ -1001,14 +1001,14 @@ async function starts() {
 				        bo = args[0]
 				        _level.sort((a, b) => (a.xp < b.xp) ? 1 : -1)
 				        uang.sort((a, b) => (a.uang < b.uang) ? 1 : -1)
-                                        let leaderboardlvl = '-----[ *LEADERBOARD LEVEL* ]----\n\n'
-                                        let leaderboarduang = '-----[ *LEADERBOARD UANG* ]----\n\n'
+                                        let leaderboardlvl = '*「 LEADERBOARD LEVEL 」*\n\n'
+                                        let leaderboarduang = '*「 LEADERBOARD BALANCE 」*\n\n'
                                         var nom = 0
                                         try {
                                                 for (let i = 0; i < 10; i++) {
                                                         nom++
-                                                        leaderboardlvl += `*[${nom}]* wa.me/${_level[i].id.replace('@s.whatsapp.net', '')}\n┗⊱ *XP*: ${_level[i].xp} *Level*: ${_level[i].level}\n`
-                                                        leaderboarduang += `*[${nom}]* wa.me/${uang[i].id.replace('@s.whatsapp.net', '')}\n┣⊱ *Uang*: _Rp${uang[i].uang}_\n┗⊱ *Limit*: ${limitawal - _limit[i].limit}\n`
+                                                        leaderboardlvl += `*「 ${nom} 」* wa.me/${_level[i].id.replace('@s.whatsapp.net', '')}\n  │\n  └❏ *XP*: ${_level[i].xp} *Level*: ${_level[i].level}\n`
+                                                        leaderboarduang += `*「 ${nom} 」* wa.me/${uang[i].id.replace('@s.whatsapp.net', '')}\n  │\n  ├❏ *Uang*: _Rp${uang[i].uang}_\n  └❏ *Limit*: ${limitawal - _limit[i].limit}\n`
                                                 }
                                                 await reply(leaderboardlvl)
                                                 await reply(leaderboarduang)
@@ -1041,8 +1041,8 @@ async function starts() {
                                                 const result = `Gift kuota limit sukses dengan SN: ${createSerial(8)} pada ${moment().format('DD/MM/YY HH:mm:ss')}
 *「 GIFT KUOTA LIMIT 」*
 
-• User : @${updated.id.replace('@s.whatsapp.net','')}
-• Limit: ${limitawal-updated.limit}`
+❏ User : @${updated.id.replace('@s.whatsapp.net','')}
+❏ Limit: ${limitawal-updated.limit}`
                                                 console.log(_limit[found])
                                                 fs.writeFileSync('./../database/user/limit.json',JSON.stringify(_limit));
                                                 reply(result)
@@ -1063,7 +1063,7 @@ async function starts() {
 	                                        const checkExp = ms(getPremiumExpired(deret[i]) - Date.now())
 	                                        arrayPremi.push(getAllPremiumUser()[i])
 	                                        nomorList++
-	                                        listPremi += `${nomorList}. wa.me/${getAllPremiumUser()[i].split("@")[0]}\n➸ *Expired*: ${checkExp.days} day(s) ${checkExp.hours} hour(s) ${checkExp.minutes} minute(s)\n\n`
+	                                        listPremi += `「 ${nomorList} 」 wa.me/${getAllPremiumUser()[i].split("@")[0]}\n❏ *Expired*: ${checkExp.days} day(s) ${checkExp.hours} hour(s) ${checkExp.minutes} minute(s)\n\n`
 	                                }
 	                                await reply(listPremi)
 	                                break
@@ -1110,7 +1110,7 @@ async function starts() {
                                         const userXp = getLevelingXp(sender)
                                         if (userLevel === undefined && userXp === undefined) return reply(langB.lvlnul())
                                         const requiredXp = 5000 * (Math.pow(2, userLevel) - 1)
-                                        resul = `┏━━❉ *LEVEL* ❉━━\n┣⊱ *Nama* : ${pushname}\n┣⊱ Nomor : wa.me/${sender.split("@")[0]}\n┣⊱ User XP :  ${userXp}/${requiredXp}\n┣⊱ User Level : ${userLevel}\n┗━━━━━━━━━━━━`
+                                        resul = `*「 LEVEL 」*\n❏ *Nama* : ${pushname}\n❏ Nomor : wa.me/${sender.split("@")[0]}\n❏ User XP :  ${userXp}/${requiredXp}\n❏ User Level : ${userLevel}`
                                         costum(resul, text, tescuk, per)
 				        break 
 				case 'mining': //affis
@@ -1158,7 +1158,7 @@ async function starts() {
 					break
 				case 'checkprem': //affis
 				        const cekExp = ms(getPremiumExpired(sender) - Date.now())
-				        reply(`*「 PREMIUM EXPIRED 」*\n\n➸ *ID*: ${sender.split('@')[0]}\n➸ *Premium left*: ${cekExp.days} day(s) ${cekExp.hours} hour(s) ${cekExp.minutes} minute(s)`)
+				        reply(`*「 PREMIUM EXPIRED 」*\n\n❏ *ID*: ${sender.split('@')[0]}\n❏ *Premium left*: ${cekExp.days} day(s) ${cekExp.hours} hour(s) ${cekExp.minutes} minute(s)`)
 				        break
                                 case 'leveling': //affis
                                         if (!isGroup) return reply(langB.groupo())
@@ -1218,9 +1218,9 @@ async function starts() {
                                         reply('Success Menghapus BAD WORD!')
                                         break 
                                 case 'listbadword': //affis
-                                        let lbw = `Ini adalah list BAD WORD\nTotal : ${bad.length}\n`
+                                        let lbw = `◩ *List Badword*\nTotal : ${bad.length}\n`
                                         for (let i of bad) {
-                                                lbw += `➸ ${i.replace(bad)}\n`
+                                                lbw += `❏ ${i.replace(bad)}\n`
                                         }
                                         await reply(lbw)
                                         break
