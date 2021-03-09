@@ -349,11 +349,12 @@ async function starts() {
 			const content = JSON.stringify(mek.message)
 			const from = mek.key.remoteJid
 			const type = Object.keys(mek.message)[0]
-			const mbbKey = mbbApiKey // contact mhankbarbar on whatsapp wa.me/6285892766102
 			const { text, extendedText, contact, location, liveLocation, image, video, sticker, document, audio, product } = MessageType
 			const time = moment.tz('Asia/Jakarta').format('DD/MM HH:mm:ss')
 			body = (type === 'conversation' && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption.startsWith(prefix) ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption.startsWith(prefix) ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text.startsWith(prefix) ? mek.message.extendedTextMessage.text : ''
 			budy = (type === 'conversation') ? mek.message.conversation : (type === 'extendedTextMessage') ? mek.message.extendedTextMessage.text : ''
+			var cht = (type === 'conversation' && mek.message.conversation) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text ? mek.message.extendedTextMessage.text : ''
+			const chat = cht.slice(0).trim().split(/ +/).shift().toLowerCase()
 			const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
 			const args = body.trim().split(/ +/).slice(1)
 			const isCmd = body.startsWith(prefix)
@@ -376,6 +377,12 @@ async function starts() {
 			pushname = nsls.contacts[sender] != undefined ? nsls.contacts[sender].vname || nsls.contacts[sender].notify : undefined
                         const botName = botNames
                         const ownerName = ownerNames
+                        const isEventon = isGroup ? event.includes(from) : false
+                        const isRegistered = checkRegisteredUser(sender)
+                        const isBadWord = isGroup ? badword.includes(from) : false
+                        const isLevelingOn = isGroup ? _leveling.includes(from) : false
+			const isPrem = prem.includes(sender) || isOwner
+			const isAntiLink = isGroup ? antilink.includes(from) : false
                         
 			const isUrl = (url) => {
 			    return url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/, 'gi'))
@@ -610,28 +617,19 @@ async function starts() {
  	                }
 
 	   	        if (isGroup && isBadWord) {
-                            if (bad.includes(messagesC)) {
+                            if (bad.includes(chat)) {
                                 if (!isGroupAdmins) {
-                                    try { 
+                                    try {
+                                        var kicbedworuser =  
                                         reply("JAGA UCAPAN DONG!! 😠")
                                         setTimeout( () => {
  	                                    nsls.groupLeave(from) 
- 					}, 5000)
+ 					}, 3000)
 					setTimeout( () => {
 					    nsls.updatePresence(from, Presence.composing)
-					    reply("1detik")
-					}, 4000)
-					setTimeout( () => {
-					    nsls.updatePresence(from, Presence.composing)
-					    reply("2detik")
-					}, 3000)
-					setTimeout( () => {
-					    nsls.updatePresence(from, Presence.composing)
-					    reply("3detik")
 					}, 2000)
 					setTimeout( () => {
 					    nsls.updatePresence(from, Presence.composing)
-					    reply("4detik")
 					}, 1000)
 					setTimeout( () => {
 					    nsls.updatePresence(from, Presence.composing)
@@ -647,12 +645,12 @@ async function starts() {
                         }
 
 			//function antilink 
-			if (messagesC.includes("://chat.whatsapp.com/")){
+			if (chat.includes("://chat.whatsapp.com/")){
 			    if (!isGroup) return
 			    if (!isAntiLink) return
 			    if (isGroupAdmins) return reply('karena kamu adalah admin group, BOT tidak akan kick kamu')
 			    nsls.updatePresence(from, Presence.composing)
-			    if (messagesC.includes("#izinadmin")) return reply("#izinadmin diterima")
+			    if (chat.includes("#izinadmin")) return reply("#izinadmin diterima")
 			    var kic = `${sender.split("@")[0]}@s.whatsapp.net`
 			    reply(`Link Group Terdeteksi maaf ${sender.split("@")[0]} anda akan di kick dari group 5detik lagi`)
 			    setTimeout( () => {
@@ -746,6 +744,376 @@ async function starts() {
 					        })
 					    });
 				        break
+                                case 'stiker': //mbb
+				case 'sticker':
+					if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
+						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
+						const media = await nsls.downloadAndSaveMediaMessage(encmedia)
+						ran = getRandom('.webp')
+						await ffmpeg(`./${media}`)
+							.input(media)
+							.on('start', function (cmd) {
+								console.log(`Started : ${cmd}`)
+							})
+							.on('error', function (err) {
+								console.log(`Error : ${err}`)
+								fs.unlinkSync(media)
+								reply(mess.error.stick)
+							})
+							.on('end', function () {
+								console.log('Finish')
+								exec(`webpmux -set exif ${addMetadata('BOT', authorname)} ${ran} -o ${ran}`, async (error) => {
+									if (error) return reply(mess.error.stick)
+									nsls.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+									fs.unlinkSync(media)	
+									fs.unlinkSync(ran)	
+								})
+								/*nsls.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+								fs.unlinkSync(media)
+								fs.unlinkSync(ran)*/
+							})
+							.addOutputOptions([`-vcodec`,`libwebp`,`-vf`,`scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
+							.toFormat('webp')
+							.save(ran)
+					} else if ((isMedia && mek.message.videoMessage.seconds < 11 || isQuotedVideo && mek.message.extendedTextMessage.contextInfo.quotedMessage.videoMessage.seconds < 11) && args.length == 0) {
+						const encmedia = isQuotedVideo ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
+						const media = await nsls.downloadAndSaveMediaMessage(encmedia)
+						ran = getRandom('.webp')
+						reply(mess.wait)
+						await ffmpeg(`./${media}`)
+							.inputFormat(media.split('.')[1])
+							.on('start', function (cmd) {
+								console.log(`Started : ${cmd}`)
+							})
+							.on('error', function (err) {
+								console.log(`Error : ${err}`)
+								fs.unlinkSync(media)
+								tipe = media.endsWith('.mp4') ? 'video' : 'gif'
+								reply(`❌ Gagal, pada saat mengkonversi ${tipe} ke stiker`)
+							})
+							.on('end', function () {
+								console.log('Finish')
+								exec(`webpmux -set exif ${addMetadata('BOT', authorname)} ${ran} -o ${ran}`, async (error) => {
+									if (error) return reply(mess.error.stick)
+									nsls.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+									fs.unlinkSync(media)
+									fs.unlinkSync(ran)
+								})
+								/*nsls.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+								fs.unlinkSync(media)
+								fs.unlinkSync(ran)*/
+							})
+							.addOutputOptions([`-vcodec`,`libwebp`,`-vf`,`scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
+							.toFormat('webp')
+							.save(ran)
+					} else {
+						reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
+					}
+					break
+				case 'gtts': //mbb
+                                case 'tts':
+					if (args.length < 1) return nsls.sendMessage(from, 'Kode bahasanya mana om?', text, {quoted: mek})
+					const gtts = require('./lib/gtts')(args[0])
+					if (args.length < 2) return nsls.sendMessage(from, 'Textnya mana om', text, {quoted: mek})
+					dtt = body.slice(9)
+					ranm = getRandom('.mp3')
+					dtt.length > 600
+					? reply('Textnya kebanyakan om')
+					: gtts.save(ranm, dtt, function() {
+						nsls.sendMessage(from, fs.readFileSync(ranm), audio, {quoted: mek, mimetype: 'audio/mp4', ptt:true})
+						fs.unlinkSync(ranm)
+					})
+					break
+				case 'setprefix': //mbb
+					if (args.length < 1) return
+					if (!isOwner) return reply(mess.only.ownerB)
+					prefix = args[0]
+					setting.prefix = prefix
+					fs.writeFileSync('./settings/setting.json', JSON.stringify(setting, null, '\t'))
+					nsls.sendMessage(from, langB.sucpref(prefix), text)
+					break
+				case 'ytmp3': //mbb
+					if (args.length < 1) return reply('Urlnya mana um?')
+					if(!isUrl(args[0]) && !args[0].includes('youtu')) return reply(mess.error.Iv)
+					anu = await fetchJson(`https://mhankbarbar.tech/api/yta?url=${args[0]}&apiKey=${apiKey}`, {method: 'get'})
+					if (anu.error) return reply(anu.error)
+					teks = `*Title* : ${anu.title}\n*Filesize* : ${anu.filesize}\n\n*LAGUNYA LAGI DIKIRIM, JANGAN SPAM YA SAYANG...*`
+					thumb = await getBuffer(anu.thumb)
+					nsls.sendMessage(from, thumb, image, {quoted: mek, caption: teks})
+					buffer = await getBuffer(anu.result)
+					nsls.sendMessage(from, buffer, audio, {mimetype: 'audio/mp4', filename: `${anu.title}.mp3`, quoted: mek})
+					break
+				case 'clearall': //mbb
+					if (!isOwner) return reply('Kamu siapa?')
+					anu = await nsls.chats.all()
+					nsls.setMaxListeners(25)
+					for (let _ of anu) {
+						nsls.deleteChat(_.jid)
+					}
+					reply('Sukses delete all chat :)')
+					break
+				case 'bc': //mbb
+					if (!isOwner) return reply('Kamu siapa?')
+					if (args.length < 1) return reply('.......')
+					anu = await nsls.chats.all()
+					if (isMedia && !mek.message.videoMessage || isQuotedImage) {
+						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
+						buff = await nsls.downloadMediaMessage(encmedia)
+						for (let _ of anu) {
+							nsls.sendMessage(_.jid, buff, image, {caption: `[ Ini Broadcast ]\n\n${body.slice(4)}`})
+						}
+						reply('Suksess broadcast')
+					} else {
+						for (let _ of anu) {
+							sendMess(_.jid, `[ Ini Broadcast ]\n\n${body.slice(4)}`)
+						}
+						reply('Suksess broadcast')
+					}
+					break
+                                case 'promote': //mbb
+					if (!isGroup) return reply(mess.only.group)
+					if (!isGroupAdmins) return reply(mess.only.admin)
+					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return
+					mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
+					if (mentioned.length > 1) {
+						teks = 'Berhasil Promote\n'
+						for (let _ of mentioned) {
+							teks += `@${_.split('@')[0]}\n`
+						}
+						mentions(from, mentioned, true)
+						nsls.groupRemove(from, mentioned)
+					} else {
+						mentions(`Berhasil Promote @${mentioned[0].split('@')[0]} Sebagai Admin Group!`, mentioned, true)
+						nsls.groupMakeAdmin(from, mentioned)
+					}
+					break
+				case 'demote': //mbb
+					if (!isGroup) return reply(mess.only.group)
+					if (!isGroupAdmins) return reply(mess.only.admin)
+					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return
+					mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
+					if (mentioned.length > 1) {
+						teks = 'Berhasil Demote\n'
+						for (let _ of mentioned) {
+							teks += `@${_.split('@')[0]}\n`
+						}
+						mentions(teks, mentioned, true)
+						nsls.groupRemove(from, mentioned)
+					} else {
+						mentions(`Berhasil Demote @${mentioned[0].split('@')[0]} Menjadi Member Group!`, mentioned, true)
+						nsls.groupDemoteAdmin(from, mentioned)
+					}
+					break
+				case 'add': //mbb
+					if (!isGroup) return reply(mess.only.group)
+					if (!isGroupAdmins) return reply(mess.only.admin)
+					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+					if (args.length < 1) return reply('Yang mau di add jin ya?')
+					if (args[0].startsWith('08')) return reply('Gunakan kode negara mas')
+					try {
+						num = `${args[0].replace(/ /g, '')}@s.whatsapp.net`
+						nsls.groupAdd(from, [num])
+					} catch (e) {
+						console.log('Error :', e)
+						reply('Gagal menambahkan target, mungkin karena di private')
+					}
+					break
+				case 'kick': //mbb
+					if (!isGroup) return reply(mess.only.group)
+					if (!isGroupAdmins) return reply(mess.only.admin)
+					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return reply('Tag target yang ingin di tendang!')
+					mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
+					if (mentioned.length > 1) {
+						teks = 'Perintah di terima, mengeluarkan :\n'
+						for (let _ of mentioned) {
+							teks += `@${_.split('@')[0]}\n`
+						}
+						mentions(teks, mentioned, true)
+						nsls.groupRemove(from, mentioned)
+					} else {
+						mentions(`Perintah di terima, mengeluarkan : @${mentioned[0].split('@')[0]}`, mentioned, true)
+						nsls.groupRemove(from, mentioned)
+					}
+					break
+				case 'listadmins': //mbb
+					if (!isGroup) return reply(mess.only.group)
+					teks = `List admin of group *${groupMetadata.subject}*\nTotal : ${groupAdmins.length}\n\n`
+					no = 0
+					for (let admon of groupAdmins) {
+						no += 1
+						teks += `[${no.toString()}] @${admon.split('@')[0]}\n`
+					}
+					mentions(teks, groupAdmins, true)
+					break
+                                case 'linkgroup': //mbb
+                                        if (!isGroup) return reply(mess.only.group)
+                                        if (!isGroupAdmins) return reply(mess.only.admin)
+                                        if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+                                        linkgc = await nsls.groupInviteCode(from)
+                                        reply('https://chat.whatsapp.com/'+linkgc)
+                                        break
+                                case 'leave': //nslszt
+                                        if (!isGroup) return reply(mess.only.group)
+                                        if (isGroupAdmins || isOwner) {
+                         	                nsls.groupLeave(from)
+                                        } else {
+                                                reply(mess.only.admin)
+                                        }
+                                        break
+				case 'toimg': //mbb
+					if (!isQuotedSticker) return reply('❌ reply stickernya um ❌')
+					reply(mess.wait)
+					encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
+					media = await nsls.downloadAndSaveMediaMessage(encmedia)
+					ran = getRandom('.png')
+					exec(`ffmpeg -i ${media} ${ran}`, (err) => {
+						fs.unlinkSync(media)
+						if (err) return reply('❌ Gagal, pada saat mengkonversi sticker ke gambar ❌')
+						buffer = fs.readFileSync(ran)
+						nsls.sendMessage(from, buffer, image, {quoted: mek, caption: '>//<'})
+						fs.unlinkSync(ran)
+					})
+					break
+				case 'welcome': //mbb
+					if (!isGroup) return reply(mess.only.group)
+					if (!isGroupAdmins) return reply(mess.only.admin)
+					if (args.length < 1) return reply('Hmmmm')
+					if (Number(args[0]) === 1) {
+						if (isWelkom) return reply('Udah aktif um')
+						welkom.push(from)
+						fs.writeFileSync('./../database/group/welkom.json', JSON.stringify(welkom))
+						reply('Sukses mengaktifkan fitur welcome di group ini ✔️')
+					} else if (Number(args[0]) === 0) {
+						welkom.splice(from, 1)
+						fs.writeFileSync('./../database/group/welkom.json', JSON.stringify(welkom))
+						reply('Sukses menonaktifkan fitur welcome di group ini ✔️')
+					} else {
+						reply('1 untuk mengaktifkan, 0 untuk menonaktifkan')
+					}
+                                      break
+				case 'leaderboard': //affis
+				case 'lb':
+				        bo = args[0]
+				        _level.sort((a, b) => (a.xp < b.xp) ? 1 : -1)
+				        uang.sort((a, b) => (a.uang < b.uang) ? 1 : -1)
+                                        let leaderboardlvl = '-----[ *LEADERBOARD LEVEL* ]----\n\n'
+                                        let leaderboarduang = '-----[ *LEADERBOARD UANG* ]----\n\n'
+                                        var nom = 0
+                                        try {
+                                                for (let i = 0; i < 10; i++) {
+                                                        nom++
+                                                        leaderboardlvl += `*[${nom}]* wa.me/${_level[i].id.replace('@s.whatsapp.net', '')}\n┗⊱ *XP*: ${_level[i].xp} *Level*: ${_level[i].level}\n`
+                                                        leaderboarduang += `*[${nom}]* wa.me/${uang[i].id.replace('@s.whatsapp.net', '')}\n┣⊱ *Uang*: _Rp${uang[i].uang}_\n┗⊱ *Limit*: ${limitawal - _limit[i].limit}\n`
+                                                }
+                                                await reply(leaderboardlvl)
+                                                await reply(leaderboarduang)
+                                        } catch (err) {
+                                                console.error(err)
+                                                await reply(`minimal ${len} user untuk bisa mengakses database`)
+                                        }
+				        break
+				case 'limit': //affis
+				        if (!isRegistered) return reply(ind.noregis())
+				        checkLimit(sender)
+					break 
+				case 'giftlimit': //affis
+				        if (!isOwner,!isPrem) return reply(ind.premon(pushname))
+				        const nomerr = args[0].replace('@','')
+                                        const jmla = args[1]
+                                        if (jmla <= 1) return reply(`minimal gift limit adalah 1`)
+                                        if (isNaN(jmla)) return reply(`limit harus berupa angka`)
+                                        if (!nomerr) return reply(`maaf format salah\nmasukan parameter yang benar\ncontoh : ${prefix}giftlimit @628880199392 20`)
+                                        const cysz = nomerr + '@s.whatsapp.net'
+                                        var found = false
+                                        Object.keys(_limit).forEach((i) => {
+                                                if(_limit[i].id === cysz){
+                                                        found = i
+                                                }
+                                        })
+                                        if (found !== false) {
+                                                _limit[found].limit -= jmla
+                                                const updated = _limit[found]
+                                                const result = `Gift kuota limit sukses dengan SN: ${createSerial(8)} pada ${moment().format('DD/MM/YY HH:mm:ss')}
+*「 GIFT KUOTA LIMIT 」*
+
+• User : @${updated.id.replace('@s.whatsapp.net','')}
+• Limit: ${limitawal-updated.limit}`
+                                                console.log(_limit[found])
+                                                fs.writeFileSync('./../database/user/limit.json',JSON.stringify(_limit));
+                                                reply(result)
+                                        } else {
+                                                reply(`Maaf, nomor ${nomerr} tidak terdaftar di database!`)
+                                        }
+                                        break
+				case 'premlist': //affis
+	                        case 'listprem':
+                                case 'premiumlist':
+                                case 'listpremium':
+	                                if (!isRegistered) return reply( ind.noregis())
+	                                let listPremi = '「 *PREMIUM USER LIST* 」\n\n'
+	                                var nomorList = 0
+	                                const deret = getAllPremiumUser()
+	                                const arrayPremi = []
+	                                for (let i = 0; i < deret.length; i++) {
+	                                        const checkExp = ms(getPremiumExpired(deret[i]) - Date.now())
+	                                        arrayPremi.push(getAllPremiumUser()[i])
+	                                        nomorList++
+	                                        listPremi += `${nomorList}. wa.me/${getAllPremiumUser()[i].split("@")[0]}\n➸ *Expired*: ${checkExp.days} day(s) ${checkExp.hours} hour(s) ${checkExp.minutes} minute(s)\n\n`
+	                                }
+	                                await reply(listPremi)
+	                                break
+				case 'transfer': //affis
+				        if (!isRegistered) return reply(ind.noregis())
+				        if (!q.includes('|')) return  reply(ind.wrongf())
+                                        const tujuan = q.substring(0, q.indexOf('|') - 1)
+                                        const jumblah = q.substring(q.lastIndexOf('|') + 1)
+                                        if(isNaN(jumblah)) return await reply('jumlah harus berupa angka!!')
+                                        if (jumblah < 100 ) return reply(`minimal transfer 100`)
+                                        if (checkATMuser(sender) < jumblah) return reply(`uang mu tidak mencukupi untuk melakukan transfer`)
+                                        const tujuantf = `${tujuan.replace("@", '')}@s.whatsapp.net`
+                                        fee = 0.005 *  jumblah
+                                        hasiltf = jumblah - fee
+                                        addKoinUser(tujuantf, hasiltf)
+                                        confirmATM(sender, jumblah)
+                                        addKoinUser(`${ownerNumbers}@s.whatsapp.net`, fee)
+                                        reply(`*「 SUKSES 」*\n\npengiriman uang telah sukses\ndari : +${sender.split("@")[0]}\nke : +${tujuan}\njumblah transfer : ${jumblah}\npajak : ${fee}`)
+                                        break
+				case 'bal': //affis
+                                case 'balance':
+				        if (!isRegistered) return reply(ind.noregis())
+				        const kantong = checkATMuser(sender)
+				        reply(ind.uangkau(pushname, sender, kantong))
+				        break
+				case 'buylimit':
+				        if (!isRegistered) return reply(ind.noregis())
+				        payout = body.slice(10)
+				        if(isNaN(payout)) return await reply('limit harus berupa angka!!')
+				        const koinPerlimit = 300
+				        const total = koinPerlimit * payout
+				        if ( checkATMuser(sender) <= total) return reply(`maaf uang kamu belum mencukupi. silahkan kumpulkan dan beli nanti`)
+				        if ( checkATMuser(sender) >= total ) {
+					        confirmATM(sender, total)
+					        bayarLimit(sender, payout)
+					        await reply(`*「 PEMBAYARAN BERHASIL 」*\n\n*pengirim* : Admin\n*penerima* : ${pushname}\n*nominal pembelian* : ${payout} \n*harga limit* : ${koinPerlimit}/limit\n*sisa uang mu* : ${checkATMuser(sender)}\n\nproses berhasil dengan nomer pembayaran\n${createSerial(15)}`)
+				        } 
+				        break
+				case 'wait':
+					if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
+						reply(mess.wait)
+						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
+						media = await nsls.downloadMediaMessage(encmedia)
+						await wait(media).then(res => {
+							nsls.sendMessage(from, res.video, video, {quoted: mek, caption: res.teks.trim()})
+						}).catch(err => {
+							reply(err)
+						})
+					} else {
+						reply('Foto aja mas')
+					}
+					break
 				default:
 					if (isGroup && isSimi && budy != undefined) {
 						console.log(budy)
