@@ -37,6 +37,7 @@ const { color, bgcolor } = require('./../lib/color')
 const { wait, simih, getBuffer, h2k, generateMessageID, getGroupAdmins, getRandom, banner, start, info, success, close } = require('./../lib/functions')
 const { fetchJson, fetchText } = require('./../lib/fetcher')
 const { recognize } = require('./../lib/ocr')
+const { ind, eng } = require('./text/language')
 
 /*~~~~~[ JSON File ]~~~~~*/
 const welkom = JSON.parse(fs.readFileSync('./../database/group/welkom.json'))
@@ -59,7 +60,8 @@ const {
     botNames,
     ownerNames,
     ownerNumbers,
-    zeksApiKey
+    zeksApiKey,
+    langB
 } = setting
 
 const cd = 4.32e+7
