@@ -1089,7 +1089,7 @@ async function starts() {
 				        const kantong = checkATMuser(sender)
 				        reply(langB.uangkau(pushname, sender, kantong))
 				        break
-				case 'buylimit':
+				case 'buylimit': //affis
 				        if (!isRegistered) return reply(langB.noregis())
 				        payout = body.slice(10)
 				        if(isNaN(payout)) return await reply('limit harus berupa angka!!')
@@ -1102,7 +1102,7 @@ async function starts() {
 					        await reply(`*「 PEMBAYARAN BERHASIL 」*\n\n*pengirim* : Admin\n*penerima* : ${pushname}\n*nominal pembelian* : ${payout} \n*harga limit* : ${koinPerlimit}/limit\n*sisa uang mu* : ${checkATMuser(sender)}\n\nproses berhasil dengan nomer pembayaran\n${createSerial(15)}`)
 				        }
 				        break
-				case 'level':
+				case 'level': //affis
                                         if (!isRegistered) return reply(langB.noregis())
                                         if (!isLevelingOn) return reply(langB.lvlnoon())
                                         if (!isGroup) return reply(langB.groupo())
@@ -1113,7 +1113,7 @@ async function starts() {
                                         resul = `┏━━❉ *LEVEL* ❉━━\n┣⊱ *Nama* : ${pushname}\n┣⊱ Nomor : wa.me/${sender.split("@")[0]}\n┣⊱ User XP :  ${userXp}/${requiredXp}\n┣⊱ User Level : ${userLevel}\n┗━━━━━━━━━━━━`
                                         costum(resul, text, tescuk, per)
 				        break 
-				case 'mining':
+				case 'mining': //affis
                                         if (!isRegistered) return reply(langB.noregis())
                                         if (isLimit(sender)) return reply(langB.limitend(pushname))
                                         if (!isEventon) return reply(`maaf ${pushname} event mining tidak di aktifkan oleh owner`)
@@ -1130,7 +1130,7 @@ async function starts() {
                                         await limitAdd(sender)
 					break
 				case 'grup':
-				case 'group':
+				case 'group': //affis
 					if (!isGroup) return reply(langB.groupo())
 					if (!isGroupAdmins) return reply(langB.admin())
 					if (!isBotGroupAdmins) return reply(langB.badmin())
@@ -1142,21 +1142,186 @@ async function starts() {
 						nsls.groupSettingChange(from, GroupSettingChange.messageSend, true)
 					}
 				        break
-				case 'setname':
+				case 'setname': //affis
                                         if (!isGroup) return reply(langB.groupo())
 			                if (!isGroupAdmins) return reply(langB.admin())
 				        if (!isBotGroupAdmins) return reply(langB.badmin())
                                         nsls.groupUpdateSubject(from, `${body.slice(9)}`)
                                         nsls.sendMessage(from, 'Succes, Ganti Nama Grup', text, {quoted: mek})
 					break
-                                case 'setdesc':
+                                case 'setdesc': //affis
                                         if (!isGroup) return reply(langB.groupo())
 			                if (!isGroupAdmins) return reply(langB.admin())
 				        if (!isBotGroupAdmins) return reply(langB.badmin())
                                         nsls.groupUpdateDescription(from, `${body.slice(9)}`)
                                         nsls.sendMessage(from, 'Succes, Ganti Deskripsi Grup', text, {quoted: mek})
 					break
-				case 'wait':
+				case 'checkprem': //affis
+				        const cekExp = ms(getPremiumExpired(sender) - Date.now())
+				        reply(`*「 PREMIUM EXPIRED 」*\n\n➸ *ID*: ${sender.split('@')[0]}\n➸ *Premium left*: ${cekExp.days} day(s) ${cekExp.hours} hour(s) ${cekExp.minutes} minute(s)`)
+				        break
+                                case 'leveling': //affis
+                                        if (!isGroup) return reply(langB.groupo())
+                                        if (!isGroupAdmins) return reply(langB.admin())
+                                        if (args.length < 1) return reply('Hmmm')
+                                        if (Number(args[0]) === 1) {
+                                                if (isLevelingOn) return reply('*fitur level sudah aktif sebelum nya*')
+                 	                        _leveling.push(from)
+                 	                        fs.writeFileSync('./../database/group/leveling.json', JSON.stringify(_leveling))
+                  	                        reply(langB.lvlon())
+              	                        } else if (args[0] === 'disable') {
+                  	                        _leveling.splice(from, 1)
+                 	                        fs.writeFileSync('./../database/group/leveling.json', JSON.stringify(_leveling))
+                 	                        reply(langB.lvloff())
+             	                        } else {
+                 	                        reply(langB.satukos())
+                                	}
+				        break 
+				case 'antibadword': //affis
+                                        if (!isGroup) return reply(langB.groupo())
+                                        if (!isGroupAdmins) return reply(langB.admin())
+                                        if (args.length < 1) return reply('Hmmm')
+                                        if (args[0] === 'enable') {
+                                                if (isBadWord) return reply('*fitur BadWord sudah aktif sebelum nya*')
+                 	                        badword.push(from)
+                 	                        fs.writeFileSync('./../database/group/badword.json', JSON.stringify(badword))
+                  	                        reply(`badword is enable`)
+              	                        } else if (args[0] === 'disable') {
+                  	                        badword.splice(from, 1)
+                 	                        fs.writeFileSync('./../database/group/badword.json', JSON.stringify(badword))
+                 	                        reply(`badword is disable`)
+             	                        } else {
+                 	                        reply(langB.satukos())
+                	                }
+                                        break
+				case 'delete': //nslszt
+				case 'del':
+				case 'd':
+				        nsls.deleteMessage(from, { id: mek.message.extendedTextMessage.contextInfo.stanzaId, remoteJid: from, fromMe: true }) 
+				        break
+				case 'addbadword': //affis
+                                        if (!isOwner) return reply(langB.ownerb())
+                                        if (!isGroupAdmins) return reply(langB.admin())
+                                        if (args.length < 1) return reply( `Kirim perintah ${prefix}addbadword [kata kasar]. contoh ${prefix}addbadword bego`)
+                                        const bw = body.slice(12)
+                                        bad.push(bw)
+                                        fs.writeFileSync('./../database/group/bad.json', JSON.stringify(bad))
+                                        reply('Success Menambahkan Bad Word!')
+                                        break
+                                case 'delbadword': //affis
+                                        if (!isOwner) return reply(langB.ownerb())
+                                        if (!isGroupAdmins) return reply(langB.admin())
+                                        if (args.length < 1) return reply( `Kirim perintah ${prefix}addbadword [kata kasar]. contoh ${prefix}addbadword bego`)
+                                        let dbw = body.slice(12)
+                                        bad.splice(dbw)
+                                        fs.writeFileSync('./../database/group/bad.json', JSON.stringify(bad))
+                                        reply('Success Menghapus BAD WORD!')
+                                        break 
+                                case 'listbadword': //affis
+                                        let lbw = `Ini adalah list BAD WORD\nTotal : ${bad.length}\n`
+                                        for (let i of bad) {
+                                                lbw += `➸ ${i.replace(bad)}\n`
+                                        }
+                                        await reply(lbw)
+                                        break
+			  	case 'event': //affis
+					if (!isGroup) return reply(langB.groupo())
+					if (!isOwner) return reply(langB.ownerb())
+					if (args.length < 1) return reply('Hmmm')
+					if (Number(args[0]) === 1) {
+						if (isEventon) return reply('*SUDAH AKTIF* !!!')
+						event.push(from)
+						fs.writeFileSync('./../database/bot/event.json', JSON.stringify(event))
+						reply('*❬ Succsess ❭ Mengaktifkan EVENT di group ini*')
+					} else if (Number(args[0]) === 0) {
+						event.splice(from, 1)
+						fs.writeFileSync('./../database/bot/event.json', JSON.stringify(event))
+						reply('*❬ Succsess ❭ Menonaktifkan EVENT di group ini*')
+					} else {
+						reply(langB.satukos())
+					}
+					break 
+				case 'antilink': //affis
+					if (!isGroup) return reply(langB.groupo())
+					if (!isGroupAdmins) return reply(langB.ownerg())
+					if (args.length < 1) return reply('Boo :𝘃')
+					if (Number(args[0]) === 1) {
+						if (isEventon) return reply('*SUDAH AKTIF* !!!')
+						antilink.push(from)
+						fs.writeFileSync('./../database/group/antilink.json', JSON.stringify(antilink))
+						reply('*❬ Succsess ❭ ACTIVATED ANTILINK*')
+					} else if (Number(args[0]) === 0) {
+						antilink.splice(from, 1)
+						fs.writeFileSync('./../database/group/antilink.json', JSON.stringify(antilink))
+						reply('*❬ Succsess ❭ DEACTIVATED ANTILINK*')
+					} else {
+						reply(langB.satukos())
+					}
+					break
+				case 'block': //nslszt
+					nsls.updatePresence(from, Presence.composing) 
+					if (!isGroup) return reply(langB.groupo())
+					if (!isOwner) return reply(langB.ownerb())
+					nsls.blockUser (`${body.slice(8)}@c.us`, "add")
+					nsls.sendMessage(from, `perintah Diterima, memblokir wa.me${body.slice(8)}@c.us`, text)
+				        break
+				case 'unblock': //nslszt
+					nsls.updatePresence(from, Presence.composing) 
+					if (!isGroup) return reply(langB.group())
+					if (!isOwner) return reply(langB.ownerb())
+					nsls.blockUser (`${body.slice(10)}@c.us`, "remove")
+					nsls.sendMessage(from, `perintah Diterima, membuka blokir wa.me/${body.slice(10)}`, text)
+				        break
+				case 'clearall': //mbb
+					if (!isOwner) return reply(langB.ownerb())
+					anu = await nsls.chats.all()
+					nsls.setMaxListeners(25)
+					for (let _ of anu) {
+						nsls.deleteChat(_.jid)
+					}
+					reply(langB.clears())
+				        break
+				case 'addprem': //affis
+                                case 'addpremium':
+				        if (!isOwner) return reply(langB.ownerb())
+				        expired = "30d"
+				        if (args.length < 1 ) return reply(' tag member')
+				        mente = `${args[0].replace('@','')}@s.whatsapp.net`
+				        const pnom = {id: mente , expired: Date.now() + toMs(expired) }
+				        prem.push(pnom) 
+				        fs.writeFileSync('./../database/user/prem.json',JSON.stringify(prem))
+				        reply(langB.premadd(args[0]))
+				        break
+				case 'delprem': //affis
+                                case 'delpremium':
+				        if (!isOwner) return reply(langB.ownerb())
+				        if (args.length < 1 ) return reply(' tag member')
+				        mente = `${args[0].replace('@','')}@s.whatsapp.net`
+ 			                for( var i = 0; i < arr.length; i++){ 
+ 		                                if ( arr[i] === mente) { 
+    		      	                                arr.splice(i, 1); 
+      		   	                                i--; 
+      				                        fs.writeFileSync('./../database/user/prem.json',JSON.stringify(arr))
+       			                        }
+ 			                }
+				        reply(langB.dellprem(args[0]))
+				        break
+				case 'tomp3': //affis
+				        nsls.updatePresence(from, Presence.composing)
+				        if (!isQuotedVideo) return reply('itu video bruh?:V')
+				        reply(langB.wait())
+				        encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo
+				        media = await nsls.downloadAndSaveMediaMessage(encmedia)
+				        ran = getRandom('.mp4')
+				        exec(`ffmpeg -i ${media} ${ran}`, (err) => {
+					        fs.unlinkSync(media)
+					        if (err) return reply('Yahh emrror bruh:(')
+					        buffer = fs.readFileSync(ran)
+					        nsls.sendMessage(from, buffer, audio, { mimetype: 'audio/mp4', quoted: mek })
+					        fs.unlinkSync(ran)
+				        })
+				        break
+				case 'wait': //mbb
 					if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
 						reply(langB.wait())
 						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
