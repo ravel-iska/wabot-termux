@@ -552,7 +552,7 @@ async function starts() {
                                 if (requiredXp <= getLevelingXp(sender)) {
                                     addLevelingLevel(sender, 1)
                                     bayarLimit(sender, 3)
-                                    await reply(ind.levelup(pushname, sender, getLevelingXp,  getLevel, getLevelingLevel, role))
+                                    await reply(langB.levelup(pushname, sender, getLevelingXp,  getLevel, getLevelingLevel, role))
                                 }
                             } catch (err) {
                                 console.error(err)
@@ -566,7 +566,7 @@ async function starts() {
                                 if (lmt.id === sender) {
                                     let limitCounts = limitawal - lmt.limit
                                     if (limitCounts <= 0) return nsls.sendMessage(from,`Limit request anda sudah habis\n\n_Note : limit bisa di dapatkan dengan cara ${prefix}buylimit dan dengan naik level_`, text,{ quoted: mek})
-                                    nsls.sendMessage(from, ind.limitcount(limitCounts), text, { quoted : mek})
+                                    nsls.sendMessage(from, langB.limitcount(limitCounts), text, { quoted : mek})
                                     found = true
                                 }
                             }
@@ -574,7 +574,7 @@ async function starts() {
                                 let obj = { id: sender, limit: 0 }
                                 _limit.push(obj)
                                 fs.writeFileSync('./../database/user/limit.json', JSON.stringify(_limit))
-                                nsls.sendMessage(from, ind.limitcount(limitCounts), text, { quoted : mek})
+                                nsls.sendMessage(from, langB.limitcount(limitCounts), text, { quoted : mek})
                             }
 		        }
 
@@ -587,7 +587,7 @@ async function starts() {
                         	    let limits = i.limit
                                     if (limits >= limitawal ) {
               	                        position = true
-                                        nsls.sendMessage(from, ind.limitend(pushname), text, {quoted: mek})
+                                        nsls.sendMessage(from, langB.limitend(pushname), text, {quoted: mek})
                                         return true
                                     } else {
                         	        _limit
@@ -760,12 +760,12 @@ async function starts() {
 							.on('error', function (err) {
 								console.log(`Error : ${err}`)
 								fs.unlinkSync(media)
-								reply(mess.error.stick)
+								reply(langB.stikga())
 							})
 							.on('end', function () {
 								console.log('Finish')
 								exec(`webpmux -set exif ${addMetadata('BOT', authorname)} ${ran} -o ${ran}`, async (error) => {
-									if (error) return reply(mess.error.stick)
+									if (error) return reply(langB.stikga())
 									nsls.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
 									fs.unlinkSync(media)	
 									fs.unlinkSync(ran)	
@@ -781,7 +781,7 @@ async function starts() {
 						const encmedia = isQuotedVideo ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
 						const media = await nsls.downloadAndSaveMediaMessage(encmedia)
 						ran = getRandom('.webp')
-						reply(mess.wait)
+						reply(langB.wait())
 						await ffmpeg(`./${media}`)
 							.inputFormat(media.split('.')[1])
 							.on('start', function (cmd) {
@@ -796,7 +796,7 @@ async function starts() {
 							.on('end', function () {
 								console.log('Finish')
 								exec(`webpmux -set exif ${addMetadata('BOT', authorname)} ${ran} -o ${ran}`, async (error) => {
-									if (error) return reply(mess.error.stick)
+									if (error) return reply(langB.stikga())
 									nsls.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
 									fs.unlinkSync(media)
 									fs.unlinkSync(ran)
@@ -828,7 +828,7 @@ async function starts() {
 					break
 				case 'setprefix': //mbb
 					if (args.length < 1) return
-					if (!isOwner) return reply(mess.only.ownerB)
+					if (!isOwner) return reply(langB.ownerb())
 					prefix = args[0]
 					setting.prefix = prefix
 					fs.writeFileSync('./settings/setting.json', JSON.stringify(setting, null, '\t'))
@@ -836,8 +836,8 @@ async function starts() {
 					break
 				case 'ytmp3': //mbb
 					if (args.length < 1) return reply('Urlnya mana um?')
-					if(!isUrl(args[0]) && !args[0].includes('youtu')) return reply(mess.error.Iv)
-					anu = await fetchJson(`https://mhankbarbar.tech/api/yta?url=${args[0]}&apiKey=${apiKey}`, {method: 'get'})
+					if(!isUrl(args[0]) && !args[0].includes('youtu')) return reply()
+					anu = await fetchJson(`https://mhankbarbar.tech/api/yta?url=${args[0]}&apiKey=${mbbApiKey}`, {method: 'get'})
 					if (anu.error) return reply(anu.error)
 					teks = `*Title* : ${anu.title}\n*Filesize* : ${anu.filesize}\n\n*LAGUNYA LAGI DIKIRIM, JANGAN SPAM YA SAYANG...*`
 					thumb = await getBuffer(anu.thumb)
@@ -873,9 +873,9 @@ async function starts() {
 					}
 					break
                                 case 'promote': //mbb
-					if (!isGroup) return reply(mess.only.group)
-					if (!isGroupAdmins) return reply(mess.only.admin)
-					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+					if (!isGroup) return reply(langB.groupo())
+					if (!isGroupAdmins) return reply(langB.admin())
+					if (!isBotGroupAdmins) return reply(langB.badmin())
 					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return
 					mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
 					if (mentioned.length > 1) {
@@ -891,9 +891,9 @@ async function starts() {
 					}
 					break
 				case 'demote': //mbb
-					if (!isGroup) return reply(mess.only.group)
-					if (!isGroupAdmins) return reply(mess.only.admin)
-					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+					if (!isGroup) return reply(langB.groupo())
+					if (!isGroupAdmins) return reply(langB.admin())
+					if (!isBotGroupAdmins) return reply(langB.badmin())
 					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return
 					mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
 					if (mentioned.length > 1) {
@@ -909,9 +909,9 @@ async function starts() {
 					}
 					break
 				case 'add': //mbb
-					if (!isGroup) return reply(mess.only.group)
-					if (!isGroupAdmins) return reply(mess.only.admin)
-					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+					if (!isGroup) return reply(langB.groupo())
+					if (!isGroupAdmins) return reply(langB.admin())
+					if (!isBotGroupAdmins) return reply(langB.badmin)
 					if (args.length < 1) return reply('Yang mau di add jin ya?')
 					if (args[0].startsWith('08')) return reply('Gunakan kode negara mas')
 					try {
@@ -923,9 +923,9 @@ async function starts() {
 					}
 					break
 				case 'kick': //mbb
-					if (!isGroup) return reply(mess.only.group)
-					if (!isGroupAdmins) return reply(mess.only.admin)
-					if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+					if (!isGroup) return reply(langB.groupo())
+					if (!isGroupAdmins) return reply(langB.admin())
+					if (!isBotGroupAdmins) return reply(langB.badmin())
 					if (mek.message.extendedTextMessage === undefined || mek.message.extendedTextMessage === null) return reply('Tag target yang ingin di tendang!')
 					mentioned = mek.message.extendedTextMessage.contextInfo.mentionedJid
 					if (mentioned.length > 1) {
@@ -941,7 +941,7 @@ async function starts() {
 					}
 					break
 				case 'listadmins': //mbb
-					if (!isGroup) return reply(mess.only.group)
+					if (!isGroup) return reply(langB.groupo())
 					teks = `List admin of group *${groupMetadata.subject}*\nTotal : ${groupAdmins.length}\n\n`
 					no = 0
 					for (let admon of groupAdmins) {
@@ -951,23 +951,23 @@ async function starts() {
 					mentions(teks, groupAdmins, true)
 					break
                                 case 'linkgroup': //mbb
-                                        if (!isGroup) return reply(mess.only.group)
-                                        if (!isGroupAdmins) return reply(mess.only.admin)
-                                        if (!isBotGroupAdmins) return reply(mess.only.Badmin)
+                                        if (!isGroup) return reply(langB.groupo())
+                                        if (!isGroupAdmins) return reply(langB.admin())
+                                        if (!isBotGroupAdmins) return reply(langB.badmin)
                                         linkgc = await nsls.groupInviteCode(from)
                                         reply('https://chat.whatsapp.com/'+linkgc)
                                         break
                                 case 'leave': //nslszt
-                                        if (!isGroup) return reply(mess.only.group)
+                                        if (!isGroup) return reply(langB.groupo())
                                         if (isGroupAdmins || isOwner) {
                          	                nsls.groupLeave(from)
                                         } else {
-                                                reply(mess.only.admin)
+                                                reply(langB.admin())
                                         }
                                         break
 				case 'toimg': //mbb
 					if (!isQuotedSticker) return reply('❌ reply stickernya um ❌')
-					reply(mess.wait)
+					reply(langB.wait())
 					encmedia = JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo
 					media = await nsls.downloadAndSaveMediaMessage(encmedia)
 					ran = getRandom('.png')
@@ -980,8 +980,8 @@ async function starts() {
 					})
 					break
 				case 'welcome': //mbb
-					if (!isGroup) return reply(mess.only.group)
-					if (!isGroupAdmins) return reply(mess.only.admin)
+					if (!isGroup) return reply(langB.groupo())
+					if (!isGroupAdmins) return reply(langB.admin())
 					if (args.length < 1) return reply('Hmmmm')
 					if (Number(args[0]) === 1) {
 						if (isWelkom) return reply('Udah aktif um')
@@ -1018,11 +1018,11 @@ async function starts() {
                                         }
 				        break
 				case 'limit': //affis
-				        if (!isRegistered) return reply(ind.noregis())
+				        if (!isRegistered) return reply(langB.noregis())
 				        checkLimit(sender)
 					break 
 				case 'giftlimit': //affis
-				        if (!isOwner,!isPrem) return reply(ind.premon(pushname))
+				        if (!isOwner,!isPrem) return reply(langB.premon(pushname))
 				        const nomerr = args[0].replace('@','')
                                         const jmla = args[1]
                                         if (jmla <= 1) return reply(`minimal gift limit adalah 1`)
@@ -1054,7 +1054,7 @@ async function starts() {
 	                        case 'listprem':
                                 case 'premiumlist':
                                 case 'listpremium':
-	                                if (!isRegistered) return reply( ind.noregis())
+	                                if (!isRegistered) return reply( langB.noregis())
 	                                let listPremi = '「 *PREMIUM USER LIST* 」\n\n'
 	                                var nomorList = 0
 	                                const deret = getAllPremiumUser()
@@ -1068,8 +1068,8 @@ async function starts() {
 	                                await reply(listPremi)
 	                                break
 				case 'transfer': //affis
-				        if (!isRegistered) return reply(ind.noregis())
-				        if (!q.includes('|')) return  reply(ind.wrongf())
+				        if (!isRegistered) return reply(langB.noregis())
+				        if (!q.includes('|')) return  reply(langB.wrongf())
                                         const tujuan = q.substring(0, q.indexOf('|') - 1)
                                         const jumblah = q.substring(q.lastIndexOf('|') + 1)
                                         if(isNaN(jumblah)) return await reply('jumlah harus berupa angka!!')
@@ -1085,12 +1085,12 @@ async function starts() {
                                         break
 				case 'bal': //affis
                                 case 'balance':
-				        if (!isRegistered) return reply(ind.noregis())
+				        if (!isRegistered) return reply(langB.noregis())
 				        const kantong = checkATMuser(sender)
-				        reply(ind.uangkau(pushname, sender, kantong))
+				        reply(langB.uangkau(pushname, sender, kantong))
 				        break
 				case 'buylimit':
-				        if (!isRegistered) return reply(ind.noregis())
+				        if (!isRegistered) return reply(langB.noregis())
 				        payout = body.slice(10)
 				        if(isNaN(payout)) return await reply('limit harus berupa angka!!')
 				        const koinPerlimit = 300
@@ -1100,11 +1100,65 @@ async function starts() {
 					        confirmATM(sender, total)
 					        bayarLimit(sender, payout)
 					        await reply(`*「 PEMBAYARAN BERHASIL 」*\n\n*pengirim* : Admin\n*penerima* : ${pushname}\n*nominal pembelian* : ${payout} \n*harga limit* : ${koinPerlimit}/limit\n*sisa uang mu* : ${checkATMuser(sender)}\n\nproses berhasil dengan nomer pembayaran\n${createSerial(15)}`)
-				        } 
+				        }
 				        break
+				case 'level':
+                                        if (!isRegistered) return reply(langB.noregis())
+                                        if (!isLevelingOn) return reply(langB.lvlnoon())
+                                        if (!isGroup) return reply(langB.groupo())
+                                        const userLevel = getLevelingLevel(sender)
+                                        const userXp = getLevelingXp(sender)
+                                        if (userLevel === undefined && userXp === undefined) return reply(langB.lvlnul())
+                                        const requiredXp = 5000 * (Math.pow(2, userLevel) - 1)
+                                        resul = `┏━━❉ *LEVEL* ❉━━\n┣⊱ *Nama* : ${pushname}\n┣⊱ Nomor : wa.me/${sender.split("@")[0]}\n┣⊱ User XP :  ${userXp}/${requiredXp}\n┣⊱ User Level : ${userLevel}\n┗━━━━━━━━━━━━`
+                                        costum(resul, text, tescuk, per)
+				        break 
+				case 'mining':
+                                        if (!isRegistered) return reply(langB.noregis())
+                                        if (isLimit(sender)) return reply(langB.limitend(pushname))
+                                        if (!isEventon) return reply(`maaf ${pushname} event mining tidak di aktifkan oleh owner`)
+                                        if (isOwner) {
+                                                const one = 999999999
+                                                addLevelingXp(sender, one)
+                                                addLevelingLevel(sender, 99)
+                                                reply(`karena anda owner kami dari team bot mengirim ${one}Xp untuk anda`)
+                                        } else {
+                                                const mining = Math.ceil(Math.random() * 10000)
+                                                addLevelingXp(sender, mining)
+                                                await reply(`*selamat* ${pushname} kamu mendapatkan *${mining}Xp*`)
+                                        }
+                                        await limitAdd(sender)
+					break
+				case 'grup':
+				case 'group':
+					if (!isGroup) return reply(langB.groupo())
+					if (!isGroupAdmins) return reply(langB.admin())
+					if (!isBotGroupAdmins) return reply(langB.badmin())
+					if (args[0] === 'buka') {
+					        reply(`*BERHASIL MEMBUKA GROUP*`)
+						nsls.groupSettingChange(from, GroupSettingChange.messageSend, false)
+					} else if (args[0] === 'tutup') {
+						reply(`*BERHASIL MENUTUP GROUP`)
+						nsls.groupSettingChange(from, GroupSettingChange.messageSend, true)
+					}
+				        break
+				case 'setname':
+                                        if (!isGroup) return reply(langB.groupo())
+			                if (!isGroupAdmins) return reply(langB.admin())
+				        if (!isBotGroupAdmins) return reply(langB.badmin())
+                                        nsls.groupUpdateSubject(from, `${body.slice(9)}`)
+                                        nsls.sendMessage(from, 'Succes, Ganti Nama Grup', text, {quoted: mek})
+					break
+                                case 'setdesc':
+                                        if (!isGroup) return reply(langB.groupo())
+			                if (!isGroupAdmins) return reply(langB.admin())
+				        if (!isBotGroupAdmins) return reply(langB.badmin())
+                                        nsls.groupUpdateDescription(from, `${body.slice(9)}`)
+                                        nsls.sendMessage(from, 'Succes, Ganti Deskripsi Grup', text, {quoted: mek})
+					break
 				case 'wait':
 					if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
-						reply(mess.wait)
+						reply(langB.wait())
 						const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
 						media = await nsls.downloadMediaMessage(encmedia)
 						await wait(media).then(res => {
