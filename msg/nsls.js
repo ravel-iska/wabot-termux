@@ -353,6 +353,8 @@ async function starts() {
 			const type = Object.keys(mek.message)[0]
 			const { text, extendedText, contact, location, liveLocation, image, video, sticker, document, audio, product } = MessageType
 			const time = moment.tz('Asia/Jakarta').format('DD/MM HH:mm:ss')
+			const timi = moment.tz('Asia/Jakarta').add(30, 'days').calendar();
+			const timu = moment.tz('Asia/Jakarta').add(20, 'days').calendar();
 			body = (type === 'conversation' && mek.message.conversation.startsWith(prefix)) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption.startsWith(prefix) ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption.startsWith(prefix) ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text.startsWith(prefix) ? mek.message.extendedTextMessage.text : ''
 			budy = (type === 'conversation') ? mek.message.conversation : (type === 'extendedTextMessage') ? mek.message.extendedTextMessage.text : ''
 			var cht = (type === 'conversation' && mek.message.conversation) ? mek.message.conversation : (type == 'imageMessage') && mek.message.imageMessage.caption ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption ? mek.message.videoMessage.caption : (type == 'extendedTextMessage') && mek.message.extendedTextMessage.text ? mek.message.extendedTextMessage.text : ''
@@ -696,7 +698,9 @@ async function starts() {
 			switch(command) {
                                 case 'help': //nslszt
                                 case 'menu':
-                                        nsls.sendMessage(from, langB.menu(prefix, pushname, botName, ownerName), text)
+				        const reqXp  = 5000 * (Math.pow(2, getLevelingLevel(sender)) - 1)
+				        const uangku = checkATMuser(sender)
+                                        nsls.sendMessage(from, langB.menu(prefix, pushname, botName, ownerName, getLevelingLevel, getLevelingXp, sender, reqXp, _registered, uangku, role, premi, nsls, process,kyun), text)
                                         break
 				case 'info': //mbb
 					me = nsls.user
@@ -1322,6 +1326,33 @@ async function starts() {
 					        nsls.sendMessage(from, buffer, audio, { mimetype: 'audio/mp4', quoted: mek })
 					        fs.unlinkSync(ran)
 				        })
+				        break
+				case 'register':
+                                        if (isRegistered) return  reply(ind.rediregis())
+                                        if (!q.includes('|')) return  reply(ind.wrongf())
+                                        const namaUser = q.substring(0, q.indexOf('|') - 0)
+                                        const umurUser = q.substring(q.lastIndexOf('|') + 1)
+                                        const serialUser = createSerial(20)
+                                        if(isNaN(umurUser)) return await reply('Umur harus berupa angka!!')
+                                        if (namaUser.length >= 30) return reply(`why is your name so long it's a name or a train`)
+                                        if (umurUser > 40) return reply(`your age is too  old maximum 40 years`)
+                                        if (umurUser < 12) return reply(`your age is too young minimum 12 years`)
+                                        try {
+					        ppimg = await client.getProfilePicture(`${sender.split('@')[0]}@c.us`)
+				        } catch {
+					        ppimg = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
+				        }
+                                        veri = sender
+                                        if (isGroup) {
+                                                addRegisteredUser(sender, namaUser, umurUser, time, serialUser)
+                                                await client.sendMessage(from, ppimg, image, {quoted: mek, caption: ind.registered(namaUser, umurUser, serialUser, time, sender)})
+                                                addATM(sender)
+                                                addLevelingId(sender)
+                                                checkLimit(sender)
+                                                console.log(color('[REGISTER]'), color(time, 'yellow'), 'Name:', color(namaUser, 'cyan'), 'Age:', color(umurUser, 'cyan'), 'Serial:', color(serialUser, 'cyan'), 'in', color(sender || groupName))
+                                        } else {
+                                                nsls.sendMessage(from, langB.nogroup(), text)
+                                        }
 				        break
 				case 'wait': //mbb
 					if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
