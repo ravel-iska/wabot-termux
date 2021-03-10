@@ -331,7 +331,7 @@ exports.levelup = (pushname, sender, getLevelingXp,  getLevel, getLevelingLevel,
 ├❏ *Xp* : ${getLevelingXp(sender)}
 ├❏ *Limit* : +3
 ├❏ *Role*: ${role}
-└❏ *Level* : ${getLevel} ⊱ ${getLevelingLevel(sender)}`
+└❏ *Level* : ${getLevel} ⋟ ${getLevelingLevel(sender)}`
 }
 exports.limitend = (pushname) => {
 	return`*maaf ${pushname} limit hari ini habis*\n*beli limit untuk mendapatkan limit/ naik level*`
