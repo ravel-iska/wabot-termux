@@ -1,5 +1,5 @@
 const fs = require('fs')
-let setting = JSON.parse(fs.readFileSync('./settings/setting.json'))
+let setting = JSON.parse(fs.readFileSync('./../../settings/setting.json'))
 let {
     ownerNumbers
 } = setting
