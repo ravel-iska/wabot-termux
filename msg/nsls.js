@@ -1134,10 +1134,10 @@ async function starts() {
 					if (!isGroup) return reply(langB.groupo())
 					if (!isGroupAdmins) return reply(langB.admin())
 					if (!isBotGroupAdmins) return reply(langB.badmin())
-					if (args[0] === 'buka') {
+					if (args[0] === 'open') {
 					        reply(`*BERHASIL MEMBUKA GROUP*`)
 						nsls.groupSettingChange(from, GroupSettingChange.messageSend, false)
-					} else if (args[0] === 'tutup') {
+					} else if (args[0] === 'close') {
 						reply(`*BERHASIL MENUTUP GROUP`)
 						nsls.groupSettingChange(from, GroupSettingChange.messageSend, true)
 					}
