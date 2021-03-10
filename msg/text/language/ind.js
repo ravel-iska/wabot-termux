@@ -11,12 +11,24 @@ exports.menu = (prefix, pushname, botName, ownerName) => {
 ◩ *User Info*
   │
   ├❏ Nama : ${pushname}
-  └❏ 
+  ├❏ Premium : ${premi}
+  ├❏ Nomer : wa.me/${sender.split("@")[0]}
+  ├❏ Uang : ⏣ ${uangku}
+  ├❏ XP : ${getLevelingXp(sender)}/${reqXp}
+  ├❏ Level : ${getLevelingLevel(sender)}
+  └❏ Role : ${role}
 ◩ *Bot Info*
   │
   ├❏ Nama Bot : ${botName}
   ├❏ Nama Owner : ${ownerName}
-  └❏ Prefix : 「 ${prefix} 」
+  ├❏ Nomor Owner : wa.me/${ownerNumbers}
+  ├❏ Prefix : 「 ${prefix} 」
+  ├❏ Browser : ${nsls.browserDescription[1]}
+  ├❏ Server : ${nsls.browserDescription[0]}
+  ├❏ Version : ${nsls.browserDescription[2]}
+  ├❏ Speed : ${process.uptime()}
+  ├❏ HandPhone : ${nsls.user.phone.device_manufacturer}
+  └❏ Versi WhatsApp : ${nsls.user.phone.wa_version}
 ◩ *Main*
   │
   ├❏ ${prefix}help
@@ -237,25 +249,28 @@ exports.lvloff = () => {
     return`*「 ✔️ 」MENONAKTIFKAN LEVELING DI GROUP INI*`
 }
 exports.lvlnul = () => {
-	return`*「 LEVELING 」LEVEL MU MASIH KOSONG*`
+    return`*「 LEVELING 」LEVEL MU MASIH KOSONG*`
 }
 exports.lvlnoon = () => {
-	return`*「 LEVELING 」LEVELING BELUM DI AKTIFKAN DI GROUP INI*`
+    return`*「 LEVELING 」LEVELING BELUM DI AKTIFKAN DI GROUP INI*`
 }
 exports.noregis = () => {
-	return`*「 BELUM DAFTAR 」*\nKamu belum terdaftar sebagai user BOT ini, silahkan register terlebih dahulu kak.\n\n*cara daftar ${prefix}daftar nama|umur* \n*contoh ${prefix}daftar nalz|17*`
+    return`*「 BELUM DAFTAR 」*\nKamu belum terdaftar sebagai user BOT ini, silahkan register terlebih dahulu kak.\n\n*cara daftar ${prefix}daftar nama|umur* \n*contoh ${prefix}daftar nalz|17*`
 }
 exports.stikga = () => {
-	return`*「 ❌ 」Coba ulangi beberapa saat lagi*`
+    return`*「 ❌ 」Coba ulangi beberapa saat lagi*`
 }
 exports.linkga = () => {
-	return`*「 ❌ 」Maaf link tidak valid*`
+    return`*「 ❌ 」Maaf link tidak valid*`
 }
 exports.groupo = () => {
-	return`*「 ❌ 」Hanya dapat digunakan di dalam group*`
+    return`*「 ❌ 」Hanya dapat digunakan di dalam group*`
+}
+exports.nogroup = () => {
+    return`*「 ❌ 」Hanya dapat digunakan di dalam private chat*`
 }
 exports.ownerb = () => {
-	return`*「 ❌ 」Hanya dapat digunakan oleh owner bot*`
+    return`*「 ❌ 」Hanya dapat digunakan oleh owner bot*`
 }
 exports.ownerg = () => {
 	return`*「 ❌ 」Hanya dapat digunakan oleh owner group*`
