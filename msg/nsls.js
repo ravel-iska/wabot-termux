@@ -1080,7 +1080,7 @@ async function starts() {
                                         hasiltf = jumblah - fee
                                         addKoinUser(tujuantf, hasiltf)
                                         confirmATM(sender, jumblah)
-                                        addKoinUser(`${ownerNumbers}@s.whatsapp.net`, fee)
+                                        addKoinUser(`${ownerNumbers.replace("@", '')}@s.whatsapp.net`, fee)
                                         reply(`*「 SUKSES 」*\n\npengiriman uang telah sukses\ndari : +${sender.split("@")[0]}\nke : +${tujuan}\njumblah transfer : ${jumblah}\npajak : ${fee}`)
                                         break
 				case 'bal': //affis
