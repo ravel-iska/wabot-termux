@@ -622,10 +622,12 @@ async function starts() {
                             if (bad.includes(chat)) {
                                 if (!isGroupAdmins) {
                                     try {
-                                        var kicbedworuser =  
+                                        var kicbedworuser = `${sender.split("@")[0]}@s.whatsapp.net`
                                         reply("JAGA UCAPAN DONG!! 😠")
                                         setTimeout( () => {
- 	                                    nsls.groupLeave(from) 
+ 	                                    nsls.groupRemove(from, [kicbedworuser]).catch((e)=>{
+                                                reply(`*ERR:* ${e}`)
+                                            })
  					}, 3000)
 					setTimeout( () => {
 					    nsls.updatePresence(from, Presence.composing)
@@ -1241,7 +1243,7 @@ async function starts() {
 						reply(langB.satukos())
 					}
 					break 
-				case 'antilink': //affis
+				case 'antilinkgroup': //affis
 					if (!isGroup) return reply(langB.groupo())
 					if (!isGroupAdmins) return reply(langB.ownerg())
 					if (args.length < 1) return reply('Boo :𝘃')
