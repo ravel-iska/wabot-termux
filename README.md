@@ -1,2 +1,2 @@
-# wabot-termux
-Whatsapp Bot
+### Testing Session...
+Please wait, this project currently testing
