@@ -1,3 +1,10 @@
+const fs = require('fs')
+let setting = JSON.parse(fs.readFileSync('./settings/setting.json'))
+let {
+    ownerNumbers
+} = setting
+const idowner = `${ownerNumbers}@s.whatsapp.net`
+
 //Reading Text
 exports.menu = (prefix, pushname, botName, ownerName) => {
     return`
@@ -10,14 +17,211 @@ exports.menu = (prefix, pushname, botName, ownerName) => {
   ├❏ Nama Bot : ${botName}
   ├❏ Nama Owner : ${ownerName}
   └❏ Prefix : 「 ${prefix} 」
+◩ *Main*
+  │
+  ├❏ ${prefix}help
+  └❏ ${prefix}menu
+◩ *Xp, Limit, & Uang*
+  │
+  ├❏ ${prefix}limit
+  ├ Usage : ${prefix}limit
+  ├ Example : ${prefix}limit
+  ├───────────────
+  ├❏ ${prefix}giftlimit
+  ├ Usage : ${prefix}giftlimit [jumlah]
+  ├ Example : ${prefix}giftlimit 3
+  ├───────────────
+  ├❏ ${prefix}buylimit
+  ├ Usage : ${prefix}buylimit [jumlah]
+  ├ Example : ${prefix}buylimit 3
+  ├───────────────
+  ├❏ ${prefix}bal
+  ├ Usage : ${prefix}bal
+  ├ Example : ${prefix}bal
+  ├───────────────
+  ├❏ ${prefix}balance
+  ├ Usage : ${prefix}balance
+  ├ Example : ${prefix}balance
+  ├───────────────
+  ├❏ ${prefix}transfer
+  ├ Usage : ${prefix}transfer [@tag|jumlah]
+  ├ Example : ${prefix}transfer @${idowner.split("@")[0]}|3
+  ├───────────────
+  ├❏ ${prefix}level
+  ├ Usage : ${prefix}level
+  ├ Example : ${prefix}level
+  ├───────────────
+  ├❏ ${prefix}mining
+  ├ Usage : ${prefix}mining
+  ├ Example : ${prefix}mining
+  ├───────────────
+  ├❏ ${prefix}leaderboard
+  ├ Usage : ${prefix}leaderboard
+  ├ Example : ${prefix}leaderboard
+  └───────────────
 ◩ *About*
   │
   ├❏ ${prefix}info
-  └❏
-◩ *Maker Commands*
+  ├ Usage : ${prefix}info
+  ├ Example : ${prefix}info
+  └───────────────
+◩ *Maker*
   │
-  ├❏
-  └❏
+  ├❏ ${prefix}sticker
+  ├ Usage : ${prefix}sticker
+  ├ Example : ${prefix}sticker
+  ├───────────────
+  ├❏ ${prefix}stiker
+  ├ Usage : ${prefix}stiker
+  ├ Example : ${prefix}stiker
+  ├───────────────
+  ├❏ ${prefix}toimg
+  ├ Usage : ${prefix}toimg
+  ├ Example : ${prefix}toimg
+  ├───────────────
+  ├❏ ${prefix}tomp3
+  ├ Usage : ${prefix}tomp3
+  ├ Example : ${prefix}tomp3
+  ├───────────────
+  ├❏ ${prefix}ttp
+  ├ Usage : ${prefix}ttp [teks]
+  ├ Example : ${prefix}ttp Nslszt
+  └───────────────
+◩ *Downloader*
+  │
+  ├❏ ${prefix}ytmp3
+  ├ Usage : ${prefix}ytmp3 [https://link]
+  ├ Example : ${prefix}ytmp3 https://youtu.be/vOdUcyAiHjI
+  └───────────────
+◩ *Group*
+  │
+  ├❏ ${prefix}promote
+  ├ Usage : ${prefix}promote [@tag]
+  ├ Example : ${prefix}promote @${idowner.split("@")[0]}
+  ├───────────────
+  ├❏ ${prefix}demote
+  ├ Usage : ${prefix}demote [@tag]
+  ├ Example : ${prefix}demote @${idowner.split("@")[0]}
+  ├───────────────
+  ├❏ ${prefix}add
+  ├ Usage : ${prefix}add [nomor]
+  ├ Example : ${prefix}add ${ownerNumbers}
+  ├───────────────
+  ├❏ ${prefix}kick
+  ├ Usage : ${prefix}kick [@tag]
+  ├ Example : ${prefix}kick @${idowner.split("@")[0]}
+  ├───────────────
+  ├❏ ${prefix}listadmins
+  ├ Usage : ${prefix}listadmins
+  ├ Example : ${prefix}listadmins
+  ├───────────────
+  ├❏ ${prefix}linkgroup
+  ├ Usage : ${prefix}linkgroup
+  ├ Example : ${prefix}linkgroup
+  ├───────────────
+  ├❏ ${prefix}leave
+  ├ Usage : ${prefix}leave
+  ├ Example : ${prefix}leave
+  ├───────────────
+  ├❏ ${prefix}group
+  ├ Usage : ${prefix}group [open/close]
+  ├ Example : ${prefix}group close
+  ├───────────────
+  ├❏ ${prefix}setname
+  ├ Usage : ${prefix}setname [teks]
+  ├ Example : ${prefix}setname Ini Group
+  ├───────────────
+  ├❏ ${prefix}setdesc
+  ├ Usage : ${prefix}setdesc [teks]
+  ├ Example : ${prefix}setdesc Welcome Tod!
+  ├───────────────
+  ├❏ ${prefix}welcome
+  ├ Usage : ${prefix}welcome [1/0]
+  ├ Example : ${prefix}welcome 1
+  ├───────────────
+  ├❏ ${prefix}antibadword
+  ├ Usage : ${prefix}antibadword [enable/disable]
+  ├ Example : ${prefix}antibadword enable
+  ├───────────────
+  ├❏ ${prefix}leveling
+  ├ Usage : ${prefix}antibadword [enable/disable]
+  ├ Example : ${prefix}antibadword enable
+  ├───────────────
+  ├❏ ${prefix}listbadword
+  ├ Usage : ${prefix}listbadword
+  ├ Example : ${prefix}listbadword
+  ├───────────────
+  ├❏ ${prefix}event
+  ├ Usage : ${prefix}event [1/0]
+  ├ Example : ${prefix}event 1
+  ├───────────────
+  ├❏ ${prefix}antilinkgroup
+  ├ Usage : ${prefix}event [1/0]
+  ├ Example : ${prefix}event 1
+  └───────────────
+◩ *Premium*
+  │
+  ├❏ ${prefix}checkpremium
+  ├ Usage : ${prefix}checkpremium
+  ├ Example : ${prefix}checkpremium
+  └───────────────
+◩ *Fun*
+  │
+  ├❏ ${prefix}tebakgambar
+  ├ Usage : ${prefix}tebakgambar
+  ├ Example : ${prefix}tebakgambar
+  ├───────────────
+  ├❏ ${prefix}memeindo
+  ├ Usage : ${prefix}memeindo
+  ├ Example : ${prefix}memeindo
+  └───────────────
+◩ *Google Text To Speech*
+  │
+  ├❏ ${prefix}gtts
+  ├ Usage : ${prefix}gtts [id_bahasa] [teks]
+  ├ Example : ${prefix}gtts en Welcome to my group tod!
+  ├───────────────
+  ├❏ ${prefix}tts
+  ├ Usage : ${prefix}tts [id_bahasa] [teks]
+  ├ Example : ${prefix}tts en Welcome to my group tod!
+  └───────────────
+◩ *Owner*
+  ├❏ ${prefix}setprefix
+  ├ Usage : ${prefix}setprefix [optional]
+  ├ Example : ${prefix}setprefix !
+  ├───────────────
+  ├❏ ${prefix}clearall
+  ├ Usage : ${prefix}clearall
+  ├ Example : ${prefix}clearall
+  ├───────────────
+  ├❏ ${prefix}bc
+  ├ Usage : ${prefix}bc [teks]
+  ├ Example : ${prefix}bc Hai zhayang :V
+  ├───────────────
+  ├❏ ${prefix}addbadword
+  ├ Usage : ${prefix}addbadword [teks]
+  ├ Example : ${prefix}addbadword bego
+  ├───────────────
+  ├❏ ${prefix}delbadword
+  ├ Usage : ${prefix}delbadword [teks]
+  ├ Example : ${prefix}delbadword bego
+  ├───────────────
+  ├❏ ${prefix}block
+  ├ Usage : ${prefix}block [nomor]
+  ├ Example : ${prefix}block ${ownerNumbers}
+  ├───────────────
+  ├❏ ${prefix}unblock
+  ├ Usage : ${prefix}unblock [nomor]
+  ├ Example : ${prefix}unblock ${ownerNumbers}
+  ├───────────────
+  ├❏ ${prefix}addpremium
+  ├ Usage : ${prefix}addpremium [@tag]
+  ├ Example : ${prefix}addpremium @${idowner.split("@")[0]}
+  ├───────────────
+  ├❏ ${prefix}delpremium
+  ├ Usage : ${prefix}delpremium [@tag]
+  ├ Example : ${prefix}delpremium @${idowner.split("@")[0]}
+  └───────────────
 `
 }
 exports.wait = () => {
