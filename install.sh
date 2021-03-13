@@ -17,9 +17,9 @@ echo "[*] Done!"
 echo "[*] Installing Wget"
 apt-get install wget -y
 echo "[*] Done!"
-echo "[*] Installing Tesseract
+echo "[*] Installing Tesseract"
 apt-get install tesseract
-echo "[*] Done
+echo "[*] Done"
 echo "[*] Cloning https://github.com/tesseract-ocr/tessdata/blob/master/ind.traineddata?raw=true"
 wget -O ~/../usr/share/tessdata/ind.traineddata "https://github.com/tesseract-ocr/tessdata/blob/master/ind.traineddata?raw=true"
 echo "[*] Done!"
